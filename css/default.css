@@ -1,0 +1,44 @@
+
+img {
+  width: 240px;
+  height:124px
+}
+
+#queryEcho {
+  display: none;
+}
+
+
+* {margin: 0; padding: 0;}
+
+#container {
+  margin: 20px;
+}
+
+#container ul {
+  list-style-type: none;
+  width: 500px;
+}
+
+#container h3 {
+  font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
+}
+
+#container li img {
+  float: left;
+  margin: 0 15px 0 0;
+}
+
+#container li p {
+  font: 200 12px/1.5 Georgia, Times New Roman, serif;
+}
+
+#container li {
+  padding: 10px;
+  overflow: auto;
+}
+
+#container li:hover {
+  background: #eee;
+  cursor: pointer;
+}
