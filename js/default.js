@@ -32,9 +32,9 @@ function addNewItem() {
 
 // function to search videos for words
 function videoSearch() {
-  var query = document.getElementById('searchquery').textContent;
+  var query = document.getElementById('searchquery');
   var newh4 = document.createElement('h4');
-  var querytext = document.createTextNode(query);
+  var querytext = document.createTextNode(query.value);
   newh4.appendChild(querytext);
 
   var position = document.getElementById('queryecho');
