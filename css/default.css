@@ -22,39 +22,39 @@ input[type="button"] {
   background-color: inherit;
 }
 
-#queryEcho {
+#alert-echo {
   float: left;
   padding-top: 20px;
 }
 
-#container ul {
+#results-container ul {
   list-style-type: none;
   width: 500px;
 }
 
-#container h3 {
+#results-container h3 {
   font-size: 20px;
   margin-bottom: 10px;
 }
 
-#container li img {
+#results-container li img {
   width: 240px;
   height:124px;
   float: left;
   margin: 10px 15px 0 0;
 }
 
-#container li p {
+#results-container li p {
   font-family: 'Roboto', sans-serif;
   font-size: 12px;
 }
 
-#container li {
+#results-container li {
   padding: 10px;
   overflow: auto;
 }
 
-#container li:hover {
+#results-container li:hover {
   background: #eee;
   cursor: pointer;
 }
