@@ -5,7 +5,7 @@ body {
 input[type="text"] {
   display: inline-block;
   margin: 0;
-  width: 50%;
+  width: 40%;
   font-size: 18px;
   appearance: none;
   box-shadow: none;
@@ -25,10 +25,6 @@ input[type="button"] {
 #queryEcho {
   float: left;
   padding-top: 20px;
-}
-
-#container {
-  /*margin: 40px 20px;*/
 }
 
 #container ul {
@@ -66,4 +62,8 @@ input[type="button"] {
 #header {
   margin: 20px;
   font-size: 24px;
+}
+
+#logo {
+  margin-right: 50px;
 }
