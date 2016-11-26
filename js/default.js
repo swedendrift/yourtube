@@ -1,3 +1,5 @@
+var resultsArray = [];
+
 function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
@@ -31,27 +33,30 @@ function ResultConstructor(videoId, publishedAt, title, description, thumbUrl) {
 
 function addSearchResults(results) {
   for (var i = 0; i < results.length; i++) {
-    if (results[i].id.kind === "youtube#video") {
-      var id = results[i].id.videoId
+    if (results[i].id.kind === 'youtube#video') {
+      var videoId = results[i].id.videoId
       var date = results[i].snippet.publishedAt
       var title = results[i].snippet.title
       var description = results[i].snippet.description
       var thumbnail = results[i].snippet.thumbnails.medium.url
-      var currentResult = new ResultConstructor(id, date, title, description, thumbnail);
-      htmlBuilder(currentResult);
+      var currentResult = new ResultConstructor(videoId, date, title, description, thumbnail);
+      resultsArray.push(currentResult);
+      resultsBuilder(currentResult);
     }
   }
 }
 
-function htmlBuilder(currentResult) {
+function resultsBuilder(currentResult) {
   var resultsList = document.getElementById('results-list');
   var newItem = document.createElement('li');
+  newItem.setAttribute('class', 'results-list-item');
+  newItem.setAttribute('id', currentResult.videoId);
   var newImg = document.createElement('img');
   newImg.setAttribute('src', currentResult.thumbUrl);
   var newHeading = document.createElement('p');
-  newHeading.setAttribute('id', "results-heading");
+  newHeading.setAttribute('id', 'results-heading');
   var newP = document.createElement('p');
-  newP.setAttribute('id', "results-description");
+  newP.setAttribute('id', 'results-description');
   var newHeadingText = document.createTextNode(currentResult.title);
   var newDescription = document.createTextNode(currentResult.description);
   newP.appendChild(newDescription);
@@ -60,6 +65,28 @@ function htmlBuilder(currentResult) {
   newItem.appendChild(newHeading);
   newItem.appendChild(newP);
   resultsList.appendChild(newItem);
+  addEventListener(currentResult.videoId);
+}
+
+function addEventListener(videoId) {
+  var playListener = document.getElementById(videoId);
+  playListener.addEventListener('click', function() {playVideo(videoId)}, false);
+}
+
+function playVideo(videoId) {
+  clearDOM()
+  var videoUrl = 'https://www.youtube.com/watch?v=' + videoId;
+  alert(videoUrl);
+  playerBuilder(videoUrl);
+}
+
+function playerBuilder(videoURL) {
+  var resultsContainer = document.getElementById('results-container')
+  var newIFrame = document.createElement('iframe');
+  newIFrame.setAttribute('width', '420');
+  newIFrame.setAttribute('height', '315');
+  newIFrame.setAttribute('src', videoURL);
+  resultsContainer.appendChild(newIFrame);
 }
 
 var searchListener = document.getElementById('searchbutton');
