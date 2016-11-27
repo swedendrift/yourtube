@@ -22,7 +22,10 @@ input[type="button"] {
 	color: #a9a9a9;
 	padding: 4px;
   background-color: inherit;
+}
 
+iframe {
+  margin: 20px;
 }
 
 #alert-echo {

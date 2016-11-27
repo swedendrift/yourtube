@@ -7,6 +7,7 @@ function searchRequest() {
   var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
   if (queryString) {
     $.get(url, function(data) {
+      console.log(data);
       addSearchResults(data.items);
     });
   }
@@ -30,6 +31,17 @@ function ResultConstructor(videoId, publishedAt, title, description, thumbUrl) {
   this.description = description;
   this.thumbUrl = thumbUrl;
 }
+
+// function iFrameConstructor(videoId) {
+//   this.height = '390';
+//   this.width = '640';
+//   this.videoId = videoId;
+//   this.events = {
+//     'onReady': onPlayerReady,
+//     'onStateChange': onPlayerStateChange
+//   };
+// };
+
 
 function addSearchResults(results) {
   for (var i = 0; i < results.length; i++) {
@@ -75,19 +87,19 @@ function addEventListener(videoId) {
 
 function playVideo(videoId) {
   clearDOM()
-  var videoUrl = 'https://www.youtube.com/watch?v=' + videoId;
-  alert(videoUrl);
+  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&origin=http://localhost"frameborder="0"'
   playerBuilder(videoUrl);
 }
 
-function playerBuilder(videoURL) {
+function playerBuilder(videoUrl) {
   var resultsContainer = document.getElementById('results-container')
   var newIFrame = document.createElement('iframe');
-  newIFrame.setAttribute('width', '420');
-  newIFrame.setAttribute('height', '315');
-  newIFrame.setAttribute('src', videoURL);
+  newIFrame.setAttribute('width', '640');
+  newIFrame.setAttribute('height', '390');
+  newIFrame.setAttribute('src', videoUrl);
   resultsContainer.appendChild(newIFrame);
 }
+
 
 var searchListener = document.getElementById('searchbutton');
 searchListener.addEventListener('click', searchRequest, false);
