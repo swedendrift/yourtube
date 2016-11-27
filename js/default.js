@@ -14,6 +14,10 @@ function searchRequest() {
 }
 
 function clearDOM() {
+  var ytContainer = document.getElementById('yt-container');
+  while (ytContainer.firstChild) {
+    ytContainer.removeChild(ytContainer.firstChild);
+  }
   var searchElements = document.getElementById('results-list');
   while (searchElements.firstChild) {
     searchElements.removeChild(searchElements.firstChild);
@@ -31,17 +35,6 @@ function ResultConstructor(videoId, publishedAt, title, description, thumbUrl) {
   this.description = description;
   this.thumbUrl = thumbUrl;
 }
-
-// function iFrameConstructor(videoId) {
-//   this.height = '390';
-//   this.width = '640';
-//   this.videoId = videoId;
-//   this.events = {
-//     'onReady': onPlayerReady,
-//     'onStateChange': onPlayerStateChange
-//   };
-// };
-
 
 function addSearchResults(results) {
   for (var i = 0; i < results.length; i++) {
@@ -87,13 +80,14 @@ function addEventListener(videoId) {
 
 function playVideo(videoId) {
   clearDOM()
-  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&origin=http://localhost"frameborder="0"'
+  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"'
   playerBuilder(videoUrl);
 }
 
 function playerBuilder(videoUrl) {
-  var resultsContainer = document.getElementById('results-container')
+  var resultsContainer = document.getElementById('yt-container')
   var newIFrame = document.createElement('iframe');
+  newIFrame.setAttribute('id', 'yt-player')
   newIFrame.setAttribute('width', '640');
   newIFrame.setAttribute('height', '390');
   newIFrame.setAttribute('src', videoUrl);
