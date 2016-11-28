@@ -1,57 +1,66 @@
-var videos = [{title: "surf", videographer: "Mowgly Lee", description: 'Nulla facilisi. Sed vel erat ut augue surf surfing vel eu nibh. Pellentesque pellentesque dolor felis, at iaculis sem blandit non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/surf.jpg"},
-{title: "beer pong", videographer: "Tin Dein", description: 'Nulla facilisi. Sed vel drunk ut augue beer pong party vel eu nibh. Pellentesque nascar dolor felis, at iaculis sem blandit non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/beerPong.jpg"},
-{title: "nascar", videographer: "Robert Denton", description: 'Nulla facilisi. Sed vel car ut augue nascar elementum vel eu crash. Pellentesque pellentesque dolor felis, at iaculis sem blandit non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/nascar.jpg"},
-{title: "volleyball", videographer: "Bruce Chindo", description: 'Nulla volleyball vel erat ut augue volley ball elementum vel eu nibh. Pellentesque pellentesque dolor felis, at iaculis sem blandit non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/volleyball.jpg"},
-{title: "surf", videographer: "Chris Clark", description: 'Nulla facilisi. Sed vel surf ut augue sollicitudin elementum vel surfing. Pellentesque drunk dolor felis, at iaculis sem blandit non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/surf2.jpg"},
-{title: "nascar", videographer: "Robert Denton", description: 'Nulla facilisi. Sed vel car ut augue nascar elementum vel eu crash. Pellentesque pellentesque dolor felis, at iaculis sem surf non. Aenean ut ipsum id ex laoreet finibus a ut.', url: "imgs/nascar.jpg"},];
-
-function addSearchResult(videoObject) {
-  var newItem = document.createElement('li');
-  var newImg = document.createElement('img');
-  newImg.setAttribute('src', videoObject.url);
-  var newHeading = document.createElement('h3');
-  var newP = document.createElement('p');
-  var newHeadingText = document.createTextNode(videoObject.title);
-  var newDescription = document.createTextNode(videoObject.description);
-  newP.appendChild(newDescription);
-  newHeading.appendChild(newHeadingText);
-  newItem.appendChild(newImg);
-  newItem.appendChild(newHeading);
-  newItem.appendChild(newP);
-  var position = document.getElementById('searchlist');
-  position.appendChild(newItem);
-}
-
-function videoSearch() {
+function searchRequest() {
   clearDOM();
-  // show the search query under the search box
-  var query = document.getElementById('searchquery');
-  var newh2 = document.createElement('h2');
-  var querytext = document.createTextNode(query.value);
-  newh2.appendChild(querytext);
-  var position = document.getElementById('queryecho');
-  position.appendChild(newh2);
-  // loop through the array placing content as its found
-  for (var i = 0; i < videos.length; i++) {
-    var searchText = query.value;
-    var itemText = videos[i].title + videos[i].description;
-    var match = itemText.toLowerCase().indexOf(searchText.toLowerCase()) > -1
-    if (searchText !== "" && match) {
-      addSearchResult(videos[i]);
-    }
+  var queryElement = document.getElementById('searchquery')
+  var queryString = queryElement.value;
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
+  if (queryString) {
+    $.get(url, function(data) {
+      addSearchResults(data.items);
+    });
   }
 }
 
 function clearDOM() {
-  var searchElements = document.getElementById('searchlist');
+  var searchElements = document.getElementById('results-list');
   while (searchElements.firstChild) {
     searchElements.removeChild(searchElements.firstChild);
   }
-  var echoElements = document.getElementById('queryecho');
+  var echoElements = document.getElementById('alert-echo');
   while (echoElements.firstChild) {
     echoElements.removeChild(echoElements.firstChild);
   }
 }
 
+function ResultConstructor(videoId, publishedAt, title, description, thumbUrl) {
+  this.videoId = videoId;
+  this.publishedAt = publishedAt;
+  this.title = title;
+  this.description = description;
+  this.thumbUrl = thumbUrl;
+}
+
+function addSearchResults(results) {
+  for (var i = 0; i < results.length; i++) {
+    if (results[i].id.kind === "youtube#video") {
+      var id = results[i].id.videoId
+      var date = results[i].snippet.publishedAt
+      var title = results[i].snippet.title
+      var description = results[i].snippet.description
+      var thumbnail = results[i].snippet.thumbnails.medium.url
+      var currentResult = new ResultConstructor(id, date, title, description, thumbnail);
+      htmlBuilder(currentResult);
+    }
+  }
+}
+
+function htmlBuilder(currentResult) {
+  var resultsList = document.getElementById('results-list');
+  var newItem = document.createElement('li');
+  var newImg = document.createElement('img');
+  newImg.setAttribute('src', currentResult.thumbUrl);
+  var newHeading = document.createElement('p');
+  newHeading.setAttribute('id', "results-heading");
+  var newP = document.createElement('p');
+  newP.setAttribute('id', "results-description");
+  var newHeadingText = document.createTextNode(currentResult.title);
+  var newDescription = document.createTextNode(currentResult.description);
+  newP.appendChild(newDescription);
+  newHeading.appendChild(newHeadingText);
+  newItem.appendChild(newImg);
+  newItem.appendChild(newHeading);
+  newItem.appendChild(newP);
+  resultsList.appendChild(newItem);
+}
+
 var searchListener = document.getElementById('searchbutton');
-searchListener.addEventListener('click', videoSearch, false);
+searchListener.addEventListener('click', searchRequest, false);
