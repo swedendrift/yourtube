@@ -1,1 +1,4 @@
 playground/
+imgs/
+node_modules/
+secret_key/

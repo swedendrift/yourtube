@@ -17,7 +17,7 @@ function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
   var queryString = queryElement.value;
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + key)
   if (queryString) {
     $.get(url, function(data) {
       console.log(data);
