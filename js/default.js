@@ -11,6 +11,15 @@ function clearDOM() {
   while (echoElements.firstChild) {
     echoElements.removeChild(echoElements.firstChild);
   }
+  var commentThreads = document.getElementById('comment-threads');
+  while (commentThreads.firstChild) {
+    commentThreads.removeChild(commentThreads.firstChild);
+  }
+  var commentInputContainer = document.getElementById('comment-input-comtainer');
+  while (commentInputContainer.firstChild) {
+    commentInputContainer.removeChild(commentInputContainer.firstChild);
+  }
+
 }
 
 function searchRequest() {
@@ -99,7 +108,7 @@ function comments(videoId) {
 }
 
 function commentInputBuilder() {
-  var commentsContainer = document.getElementById('comments-container');
+  var commentsContainer = document.getElementById('comment-input-comtainer');
 
   //create the text input and button for commenting
   var commentInputDiv = document.createElement('div');
