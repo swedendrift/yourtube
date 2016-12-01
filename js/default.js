@@ -95,13 +95,13 @@ function resultsBuilder(currentResult) {
   newItem.appendChild(newHeading);
   newItem.appendChild(newP);
   resultsList.appendChild(newItem);
-  addPlayerListener(currentResult.videoId);
+  // addPlayerListener(currentResult.videoId);
 }
 
-function addPlayerListener(videoId) {
-  var playListener = document.getElementById(videoId);
-  playListener.addEventListener('click', function() {playVideo(videoId)}, false);
-}
+// function addPlayerListener(videoId) {
+//   var playListener = document.getElementById(videoId);
+//   playListener.addEventListener('click', function() {playVideo(videoId)}, false);
+// }
 
 /* THIS STARTS THE PLAYBACK PROCESS:
     1.  addPlayerListener
@@ -134,18 +134,16 @@ function playerBuilder(videoUrl) {
   resultsContainer.appendChild(newIFrame);
 }
 
-/* THIS STARTS THE COMMENTS PROCESS:
+/*
+  THIS STARTS THE COMMENTS PROCESS:
     1.  comments
       1.  call the commentInputBuilder to construct the input box and btn for new comments
         1.  call addCommentListener passing the videoId to listen for new comments btn click
         2.  on a click addCommentListener will call newComment passing the videoId ##2()
       2.  call the findIdMatches passing the videoId
         1.  loop though the commentsCollection, pushing hits on the videoId to the matches array
-        2.  call addComment passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
+        2.  call addExistingComments passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
     2.  when the addCommentListener is clicked it invokes newComment passing the videoId
-
-
-
 */
 
 function comments(videoId) {
@@ -153,7 +151,7 @@ function comments(videoId) {
   findIdMatches(videoId);
 }
 
-function commentInputBuilder(videoId) {
+function commentInputBuilder() {
   var commentsContainer = document.getElementById('comment-input-comtainer');
   var commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
@@ -161,41 +159,40 @@ function commentInputBuilder(videoId) {
   inputBox.setAttribute('id', 'new-comment');
   inputBox.setAttribute('placeholder', "Add a comment...");
   inputBox.setAttribute('type', 'text');
-  var inputBtn = document.createElement('button');
+  var inputBtn = document.createElement('input');
   inputBtn.setAttribute('id', 'comment-btn');
   inputBtn.setAttribute('value', 'comment');
-  inputBtn.setAttribute('type', 'text');
+  inputBtn.setAttribute('type', 'button');
   var hr = document.createElement('hr');
   commentInputDiv.appendChild(inputBox);
   commentInputDiv.appendChild(inputBtn);
   commentInputDiv.appendChild(hr);
   commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
-  addCommentListener(videoId);
+  // addCommentListener();
 }
-
-function addCommentListener(videoId) {
-  var commentListener = document.getElementById('comment-btn');
-  commentListener.addEventListener('click', newComment(videoId), false);
-}
+//
+// function addCommentListener(videoId) {
+//   var commentListener = document.getElementById('comment-btn');
+//   commentListener.addEventListener('click', newComment(videoId), false);
+// }
 
 function findIdMatches(videoId) {
   var matches = [];
   for (var i = 0; i < commentsCollection.length; i++) {
     if (commentsCollection[i].videoId === videoId) {
       matches.push(commentsCollection[i]);
-      addComment(commentsCollection[i]);
+      addExistingComments(commentsCollection[i]);
     }
   }
 }
 
-function addComment(commentMatch) {
-
+function addExistingComments(commentMatch) {
   var commentThreads = document.getElementById('comment-threads');
   var newLi = document.createElement('li');
   var newHeading = document.createElement('h5');
   var newP = document.createElement('p');
   var commentId = document.createTextNode(commentMatch.videoId);
-  var commentText = document.createTextNode(commentMatch.commentString)
+  var commentText = document.createTextNode(commentMatch.commentString);
   newHeading.appendChild(commentId);
   newP.appendChild(commentText);
   newLi.appendChild(newHeading);
@@ -207,21 +204,21 @@ function addComment(commentMatch) {
 function newComment(videoId) {
   var commentElement = document.getElementById('new-comment');
   var commentString = commentElement.value;
-  var datePosted = getTimeStamp();
+  // var datePosted = getTimeStamp();
 
   var comment = {
     commentString: commentString,
-    datePosted: datePosted,
+    // datePosted: datePosted,
     videoId: videoId
   };
   commentsCollection.push(comment);
   console.log(commentsCollection);
 }
 
-function getTimeStamp() {
-  var now = new Date();
-  return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':' + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
-}
+// function getTimeStamp() {
+//   var now = new Date();
+//   return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':' + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
+// }
 
 
 var resultsCollection = [];
@@ -231,5 +228,18 @@ var commentsCollection = [{videoId: "tntOCGkgt98", datePosted: "2013-12-31T05:21
                           {videoId: "htOroIbxiFY", datePosted: "2016-07-08T13:41:40.000Z", commentString: "this is the raddest site ever"},
                           {videoId: "G8KpPw303PY", datePosted: "2016-07-08T13:41:40.000Z", commentString: "this is the gnarliest site ever"}];
 
+
 var searchListener = document.getElementById('searchbutton');
 searchListener.addEventListener('click', searchRequest, false);
+
+document.getElementById('results-list').addEventListener("click", function(e) {
+	if(e.target && e.target.nodeName == "LI") {
+		playVideo(e.target.id), false
+	}
+});
+
+// document.getElementById('comment-threads').addEventListener("click", function(e) {
+// 	if(e.target && e.target.nodeName == "LI") {
+// 		newComment(e.target.id), false
+// 	}
+// });
