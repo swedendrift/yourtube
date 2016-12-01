@@ -142,7 +142,7 @@ function playerBuilder(videoUrl) {
         2.  on a click addCommentListener will call newComment passing the videoId ##2()
       2.  call the findIdMatches passing the videoId
         1.  loop though the commentsCollection, pushing hits on the videoId to the matches array
-        2.  call addExistingComments passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
+        2.  call insertComment passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
     2.  when the addCommentListener is clicked it invokes newComment passing the videoId
 */
 
@@ -151,7 +151,7 @@ function comments(videoId) {
   findIdMatches(videoId);
 }
 
-function commentInputBuilder() {
+function commentInputBuilder(videoId) {
   var commentsContainer = document.getElementById('comment-input-container');
   var commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
@@ -161,6 +161,7 @@ function commentInputBuilder() {
   inputBox.setAttribute('type', 'text');
   var inputBtn = document.createElement('input');
   inputBtn.setAttribute('id', 'comment-btn');
+  inputBtn.setAttribute('data-videoid', videoId);
   inputBtn.setAttribute('value', 'comment');
   inputBtn.setAttribute('type', 'button');
   var hr = document.createElement('hr');
@@ -168,12 +169,8 @@ function commentInputBuilder() {
   commentInputDiv.appendChild(inputBtn);
   commentInputDiv.appendChild(hr);
   commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
-  addCommentListener();
-}
-
-function addCommentListener(videoId) {
   var commentListener = document.getElementById('comment-btn');
-  commentListener.addEventListener('click', newComment(videoId), false);
+  commentListener.addEventListener('click', newComment, false);
 }
 
 function findIdMatches(videoId) {
@@ -181,12 +178,12 @@ function findIdMatches(videoId) {
   for (var i = 0; i < commentsCollection.length; i++) {
     if (commentsCollection[i].videoId === videoId) {
       matches.push(commentsCollection[i]);
-      addExistingComments(commentsCollection[i]);
+      insertComment(commentsCollection[i]);
     }
   }
 }
 
-function addExistingComments(commentMatch) {
+function insertComment(commentMatch) {
   var commentThreads = document.getElementById('comment-threads');
   var newLi = document.createElement('li');
   var newHeading = document.createElement('h5');
@@ -201,25 +198,23 @@ function addExistingComments(commentMatch) {
 
 }
 
-function newComment(videoId) {
+function newComment() {
   var commentElement = document.getElementById('new-comment');
   var commentString = commentElement.value;
-  // var datePosted = getTimeStamp();
+  var commentBtn = document.getElementById('comment-btn');
+  var videoId = commentBtn.getAttribute('data-videoid');
+  var datePosted = new Date();
 
   var comment = {
     commentString: commentString,
-    // datePosted: datePosted,
+    datePosted: datePosted,
     videoId: videoId
   };
+
   commentsCollection.push(comment);
+  insertComment(comment);
   console.log(commentsCollection);
 }
-
-// function getTimeStamp() {
-//   var now = new Date();
-//   return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':' + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
-// }
-
 
 var resultsCollection = [];
 var commentsCollection = [{videoId: "tntOCGkgt98", datePosted: "2013-12-31T05:21:57.000Z", commentString: "this is the coolest site ever"},
@@ -237,9 +232,3 @@ document.getElementById('results-list').addEventListener("click", function(e) {
 		playVideo(e.target.id), false
 	}
 });
-//
-// document.getElementById('comment-threads').addEventListener("click", function(e) {
-// 	if(e.target && e.target.nodeName == "LI") {
-// 		newComment(e.target.id), false
-// 	}
-// });
