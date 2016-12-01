@@ -40,7 +40,6 @@ function clearDOM() {
       3. add a listener for each item (need to refactor as event delagation)
 */
 
-
 function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
@@ -95,13 +94,7 @@ function resultsBuilder(currentResult) {
   newItem.appendChild(newHeading);
   newItem.appendChild(newP);
   resultsList.appendChild(newItem);
-  // addPlayerListener(currentResult.videoId);
 }
-
-// function addPlayerListener(videoId) {
-//   var playListener = document.getElementById(videoId);
-//   playListener.addEventListener('click', function() {playVideo(videoId)}, false);
-// }
 
 /* THIS STARTS THE PLAYBACK PROCESS:
     1.  addPlayerListener
@@ -135,7 +128,7 @@ function playerBuilder(videoUrl) {
 }
 
 /*
-  THIS STARTS THE COMMENTS PROCESS:
+  THIS STARTS THE COMMENTS PROCESS:  THIS HAS CHANGES
     1.  comments
       1.  call the commentInputBuilder to construct the input box and btn for new comments
         1.  call addCommentListener passing the videoId to listen for new comments btn click
@@ -157,7 +150,7 @@ function commentInputBuilder(videoId) {
   commentInputDiv.setAttribute('id', 'comment-input-div');
   var inputBox = document.createElement('input');
   inputBox.setAttribute('id', 'new-comment');
-  inputBox.setAttribute('placeholder', "Add a comment...");
+  inputBox.setAttribute('placeholder', 'Add a comment...');
   inputBox.setAttribute('type', 'text');
   var inputBtn = document.createElement('input');
   inputBtn.setAttribute('id', 'comment-btn');
@@ -170,7 +163,11 @@ function commentInputBuilder(videoId) {
   commentInputDiv.appendChild(hr);
   commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
   var commentListener = document.getElementById('comment-btn');
-  commentListener.addEventListener('click', newComment, false);
+  commentListener.addEventListener('click', function() {
+    event.preventDefault()
+    newComment()
+    , false
+  });
 }
 
 function findIdMatches(videoId) {
@@ -188,14 +185,13 @@ function insertComment(commentMatch) {
   var newLi = document.createElement('li');
   var newHeading = document.createElement('h5');
   var newP = document.createElement('p');
-  var commentId = document.createTextNode(commentMatch.videoId);
+  var commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD").fromNow());
   var commentText = document.createTextNode(commentMatch.commentString);
   newHeading.appendChild(commentId);
   newP.appendChild(commentText);
   newLi.appendChild(newHeading);
   newLi.appendChild(newP);
-  commentThreads.appendChild(newLi);
-
+  commentThreads.insertBefore(newLi, commentThreads.childNodes[0]);
 }
 
 function newComment() {
@@ -203,32 +199,35 @@ function newComment() {
   var commentString = commentElement.value;
   var commentBtn = document.getElementById('comment-btn');
   var videoId = commentBtn.getAttribute('data-videoid');
-  var datePosted = new Date();
-
+  // var timestamp = Date.now();
+  var now = moment().format('YYYYMMDD');
+  var datePosted = moment(now, "YYYYMMDD").fromNow();
   var comment = {
     commentString: commentString,
     datePosted: datePosted,
     videoId: videoId
   };
-
   commentsCollection.push(comment);
   insertComment(comment);
-  console.log(commentsCollection);
 }
 
 var resultsCollection = [];
-var commentsCollection = [{videoId: "tntOCGkgt98", datePosted: "2013-12-31T05:21:57.000Z", commentString: "this is the coolest site ever"},
-                          {videoId: "htOroIbxiFY", datePosted: "2016-07-08T13:41:40.000Z", commentString: "this is the sickest site ever"},
-                          {videoId: "tntOCGkgt98", datePosted: '2013-12-31T05:21:57.000Z', commentString: "this is the baddest site ever"},
-                          {videoId: "htOroIbxiFY", datePosted: "2016-07-08T13:41:40.000Z", commentString: "this is the raddest site ever"},
-                          {videoId: "G8KpPw303PY", datePosted: "2016-07-08T13:41:40.000Z", commentString: "this is the gnarliest site ever"}];
+var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
+                          {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
+                          {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
+                          {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
+                          {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
 
 var searchListener = document.getElementById('searchbutton');
-searchListener.addEventListener('click', searchRequest, false);
+searchListener.addEventListener('click', function () {
+  event.preventDefault();
+  searchRequest();
+  }, false);
 
-document.getElementById('results-list').addEventListener("click", function(e) {
-	if(e.target && e.target.nodeName == "LI") {
+document.getElementById('results-list').addEventListener('click', function(e) {
+	if(e.target && e.target.nodeName == 'LI') {
+    event.preventDefault()
 		playVideo(e.target.id), false
 	}
 });
