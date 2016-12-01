@@ -15,7 +15,7 @@ function clearDOM() {
   while (commentThreads.firstChild) {
     commentThreads.removeChild(commentThreads.firstChild);
   }
-  var commentInputContainer = document.getElementById('comment-input-comtainer');
+  var commentInputContainer = document.getElementById('comment-input-container');
   while (commentInputContainer.firstChild) {
     commentInputContainer.removeChild(commentInputContainer.firstChild);
   }
@@ -152,7 +152,7 @@ function comments(videoId) {
 }
 
 function commentInputBuilder() {
-  var commentsContainer = document.getElementById('comment-input-comtainer');
+  var commentsContainer = document.getElementById('comment-input-container');
   var commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
   var inputBox = document.createElement('input');
@@ -168,13 +168,13 @@ function commentInputBuilder() {
   commentInputDiv.appendChild(inputBtn);
   commentInputDiv.appendChild(hr);
   commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
-  // addCommentListener();
+  addCommentListener();
 }
-//
-// function addCommentListener(videoId) {
-//   var commentListener = document.getElementById('comment-btn');
-//   commentListener.addEventListener('click', newComment(videoId), false);
-// }
+
+function addCommentListener(videoId) {
+  var commentListener = document.getElementById('comment-btn');
+  commentListener.addEventListener('click', newComment(videoId), false);
+}
 
 function findIdMatches(videoId) {
   var matches = [];
@@ -237,7 +237,7 @@ document.getElementById('results-list').addEventListener("click", function(e) {
 		playVideo(e.target.id), false
 	}
 });
-
+//
 // document.getElementById('comment-threads').addEventListener("click", function(e) {
 // 	if(e.target && e.target.nodeName == "LI") {
 // 		newComment(e.target.id), false
