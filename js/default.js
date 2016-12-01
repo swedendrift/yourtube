@@ -19,8 +19,27 @@ function clearDOM() {
   while (commentInputContainer.firstChild) {
     commentInputContainer.removeChild(commentInputContainer.firstChild);
   }
-
 }
+
+/* THIS STARTS THE SEARCH PROCESS:
+    1.  searchRequest
+      1.  grab the query input
+      2.  for the request url
+      3.  request data from youTube
+      4.  call addSearchResults
+
+    2.  addSearchResults
+      1.  loop through the data and for each results-heading
+          1.  construct a new object with selected items from full dataset
+          2.  push the record to resultsCollection array
+          3.  call resultsBuilder with the individual record
+
+    3. resultsBuilder
+      1. Construct the DOM elements for each result record
+      2. addpend the elemts as <li> (with img, p and h5) to the results-list <ul>
+      3. add a listener for each item (need to refactor as event delagation)
+*/
+
 
 function searchRequest() {
   clearDOM();
@@ -84,6 +103,20 @@ function addPlayerListener(videoId) {
   playListener.addEventListener('click', function() {playVideo(videoId)}, false);
 }
 
+/* THIS STARTS THE PLAYBACK PROCESS:
+    1.  addPlayerListener
+      1.  listen for a click on the element by videoId
+      2.  on a click call the playVideo function passing the target videoId
+
+    2.  playVideo
+      1.  clear the DOM
+      2.  construct the URL for the embedded video
+      3.  call the playerBuilder function passing the videoId
+        1.  construct the yourtube iframe player
+        2.  set the source to the URL from #2
+    3.  Call the comments function passing the videoId to load any existing comments and the comment input info.
+*/
+
 function playVideo(videoId) {
   clearDOM()
   var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"'
@@ -101,39 +134,47 @@ function playerBuilder(videoUrl) {
   resultsContainer.appendChild(newIFrame);
 }
 
+/* THIS STARTS THE COMMENTS PROCESS:
+    1.  comments
+      1.  call the commentInputBuilder to construct the input box and btn for new comments
+        1.  call addCommentListener passing the videoId to listen for new comments btn click
+        2.  on a click addCommentListener will call newComment passing the videoId ##2()
+      2.  call the findIdMatches passing the videoId
+        1.  loop though the commentsCollection, pushing hits on the videoId to the matches array
+        2.  call addComment passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
+    2.  when the addCommentListener is clicked it invokes newComment passing the videoId
+
+
+
+*/
+
 function comments(videoId) {
-  commentInputBuilder();
-  addCommentListener(videoId);
+  commentInputBuilder(videoId);
   findIdMatches(videoId);
 }
 
-function commentInputBuilder() {
+function commentInputBuilder(videoId) {
   var commentsContainer = document.getElementById('comment-input-comtainer');
-
-  //create the text input and button for commenting
   var commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
-
   var inputBox = document.createElement('input');
   inputBox.setAttribute('id', 'new-comment');
   inputBox.setAttribute('placeholder', "Add a comment...");
   inputBox.setAttribute('type', 'text');
-
   var inputBtn = document.createElement('button');
-  inputBtn.setAttribute('id', 'commentBtn');
+  inputBtn.setAttribute('id', 'comment-btn');
   inputBtn.setAttribute('value', 'comment');
   inputBtn.setAttribute('type', 'text');
-
   var hr = document.createElement('hr');
-
   commentInputDiv.appendChild(inputBox);
   commentInputDiv.appendChild(inputBtn);
   commentInputDiv.appendChild(hr);
   commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
+  addCommentListener(videoId);
 }
 
 function addCommentListener(videoId) {
-  var commentListener = document.getElementById('commentBtn');
+  var commentListener = document.getElementById('comment-btn');
   commentListener.addEventListener('click', newComment(videoId), false);
 }
 
@@ -163,13 +204,24 @@ function addComment(commentMatch) {
 
 }
 
-function newComment() {
-  //get value of the text box and the videoid and add it to the commentsCollection
+function newComment(videoId) {
+  var commentElement = document.getElementById('new-comment');
+  var commentString = commentElement.value;
+  var datePosted = getTimeStamp();
+
+  var comment = {
+    commentString: commentString,
+    datePosted: datePosted,
+    videoId: videoId
+  };
+  commentsCollection.push(comment);
+  console.log(commentsCollection);
 }
-// function getTimeStamp() {
-//   var now = new Date();
-//   return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':' + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
-// }
+
+function getTimeStamp() {
+  var now = new Date();
+  return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':' + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
+}
 
 
 var resultsCollection = [];
