@@ -43,7 +43,7 @@ function clearDOM() {
 function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
-  var queryString = queryElement.value;
+  var queryString = 'tutu ' + queryElement.value;
   var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + )
   if (queryString) {
     $.get(url, function(data) {
@@ -185,7 +185,7 @@ function insertComment(commentMatch) {
   var newLi = document.createElement('li');
   var newHeading = document.createElement('h5');
   var newP = document.createElement('p');
-  var commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD").fromNow());
+  var commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD"));
   var commentText = document.createTextNode(commentMatch.commentString);
   newHeading.appendChild(commentId);
   newP.appendChild(commentText);
@@ -200,8 +200,7 @@ function newComment() {
   var commentBtn = document.getElementById('comment-btn');
   var videoId = commentBtn.getAttribute('data-videoid');
   // var timestamp = Date.now();
-  var now = moment().format('YYYYMMDD');
-  var datePosted = moment(now, "YYYYMMDD").fromNow();
+  var datePosted = moment().format('YYYYMMDD');
   var comment = {
     commentString: commentString,
     datePosted: datePosted,
