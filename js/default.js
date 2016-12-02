@@ -25,7 +25,7 @@ function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
   var queryString =  queryElement.value;
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + )
   if (queryString) {
     $.get(url, function(data) {
       addSearchResults(data.items);
@@ -59,11 +59,14 @@ function Result(videoId, publishedAt, title, description, thumbUrl) {
 function resultsBuilder(currentResult) {
   var resultsList = document.getElementById('results-list');
   var newItem = document.createElement('li');
+  // newItem.setAttribute('data-vid', currentResult.videoId);
   newItem.setAttribute('class', 'results-list-item');
   newItem.setAttribute('id', currentResult.videoId);
   var newImg = document.createElement('img');
+  newImg.setAttribute('data-vid', currentResult.videoId);
   newImg.setAttribute('src', currentResult.thumbUrl);
   var newHeading = document.createElement('p');
+  newHeading.setAttribute('data-vid', currentResult.videoId);
   newHeading.setAttribute('id', 'results-heading');
   var newP = document.createElement('p');
   newP.setAttribute('id', 'results-description');
@@ -182,7 +185,7 @@ searchListener.addEventListener('click', function () {
 }, false);
 
 document.getElementById('searchquery')
-    .addEventListener("keyup", function(event) {
+    .addEventListener('keyup', function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
         document.getElementById('searchbutton').click();
@@ -190,7 +193,7 @@ document.getElementById('searchquery')
 });
 
 document.getElementById('results-list').addEventListener('click', function(e) {
-	if(e.target && e.target.nodeName == 'LI') {
+	if(e.target && e.target.dataset.vid) {
     event.preventDefault()
 		playVideo(e.target.id), false
 	}
