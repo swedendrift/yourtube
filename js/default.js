@@ -21,30 +21,11 @@ function clearDOM() {
   }
 }
 
-/* THIS STARTS THE SEARCH PROCESS:
-    1.  searchRequest
-      1.  grab the query input
-      2.  for the request url
-      3.  request data from youTube
-      4.  call addSearchResults
-
-    2.  addSearchResults
-      1.  loop through the data and for each results-heading
-          1.  construct a new object with selected items from full dataset
-          2.  push the record to resultsCollection array
-          3.  call resultsBuilder with the individual record
-
-    3. resultsBuilder
-      1. Construct the DOM elements for each result record
-      2. addpend the elemts as <li> (with img, p and h5) to the results-list <ul>
-      3. add a listener for each item (need to refactor as event delagation)
-*/
-
 function searchRequest() {
   clearDOM();
   var queryElement = document.getElementById('searchquery')
-  var queryString = 'tutu ' + queryElement.value;
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + )
+  var queryString =  queryElement.value;
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
   if (queryString) {
     $.get(url, function(data) {
       addSearchResults(data.items);
@@ -96,20 +77,6 @@ function resultsBuilder(currentResult) {
   resultsList.appendChild(newItem);
 }
 
-/* THIS STARTS THE PLAYBACK PROCESS:
-    1.  addPlayerListener
-      1.  listen for a click on the element by videoId
-      2.  on a click call the playVideo function passing the target videoId
-
-    2.  playVideo
-      1.  clear the DOM
-      2.  construct the URL for the embedded video
-      3.  call the playerBuilder function passing the videoId
-        1.  construct the yourtube iframe player
-        2.  set the source to the URL from #2
-    3.  Call the comments function passing the videoId to load any existing comments and the comment input info.
-*/
-
 function playVideo(videoId) {
   clearDOM()
   var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"'
@@ -126,18 +93,6 @@ function playerBuilder(videoUrl) {
   newIFrame.setAttribute('src', videoUrl);
   resultsContainer.appendChild(newIFrame);
 }
-
-/*
-  THIS STARTS THE COMMENTS PROCESS:  THIS HAS CHANGES
-    1.  comments
-      1.  call the commentInputBuilder to construct the input box and btn for new comments
-        1.  call addCommentListener passing the videoId to listen for new comments btn click
-        2.  on a click addCommentListener will call newComment passing the videoId ##2()
-      2.  call the findIdMatches passing the videoId
-        1.  loop though the commentsCollection, pushing hits on the videoId to the matches array
-        2.  call insertComment passing the matching object one at a time to contruct the DOM elements and attach them to the comment-threads <ul>
-    2.  when the addCommentListener is clicked it invokes newComment passing the videoId
-*/
 
 function comments(videoId) {
   commentInputBuilder(videoId);
@@ -172,6 +127,9 @@ function commentInputBuilder(videoId) {
 
 function findIdMatches(videoId) {
   var matches = [];
+  commentsCollection.sort(function (a, b){
+    return a.datePosted - b.datePosted;
+  })
   for (var i = 0; i < commentsCollection.length; i++) {
     if (commentsCollection[i].videoId === videoId) {
       matches.push(commentsCollection[i]);
@@ -217,12 +175,19 @@ var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', comme
                           {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
-
 var searchListener = document.getElementById('searchbutton');
 searchListener.addEventListener('click', function () {
   event.preventDefault();
   searchRequest();
-  }, false);
+}, false);
+
+document.getElementById('searchquery')
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+        document.getElementById('searchbutton').click();
+    }
+});
 
 document.getElementById('results-list').addEventListener('click', function(e) {
 	if(e.target && e.target.nodeName == 'LI') {
