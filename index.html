@@ -10,17 +10,25 @@
 <body>
   <div id="header">
     <span id="logo">YourTube</span>
-    <input class="searchbar" type="text" id="searchquery" placeholder="cats, clowns, stupidity...">
-    <input class="searchbar" type="button" id="searchbutton" value="Search">
+    <input class="input-bar" type="text" id="searchquery" placeholder="cats, clowns, stupidity...">
+    <input class="input-bar" type="button" id="searchbutton" value="Search">
     <div id="alert-echo"></div>
   </div>
+  <div id="yt-container"></div>
   <div id="results-container">
     <ul id="results-list"></ul>
   </div>
-  <div id="yt-container"></div>
+  <div id="comment-input-container">
+
+  </div>
+  <div id="comments-container">
+    <ul id="comment-threads">
+    </ul>
+  </div>
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
+  <script src="js/moment.js" type="text/javascript"></script>
   <script src="js/default.js" type="text/javascript"></script>
 </body>
 </html>
