@@ -36,7 +36,7 @@ function searchRequest() {
   var queryElement = document.getElementById('searchquery')
   var queryString =  queryElement.value;
   queryCollection.push(queryString);
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyA_2u6-zjkAsPqvNenfF7aBxawdPyBWp_A')
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + )
   if (queryString) {
     $.get(url, function(data) {
       addSearchResults(data.items);
