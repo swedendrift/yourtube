@@ -38,8 +38,17 @@ function searchRequest() {
   queryCollection.push(queryString);
   var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + );
   if (queryString) {
-    $.get(url, function(data) {
-      addSearchResults(data.items);
+    fetch(url).then(function(response) {
+      return response.json();
+    }).then(function(response) {
+      var results = response.items;
+      if (results.length > 0) {
+      addSearchResults(response.items);
+      } else {
+        alert('No results found.  Please try again.');
+      }
+    }).catch(function(error) {
+      alert('An error as occurred. Please try again.')
     });
   }
 }
@@ -47,11 +56,11 @@ function searchRequest() {
 function addSearchResults(results) {
   for (var i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
-      var videoId = results[i].id.videoId
-      var date = results[i].snippet.publishedAt
-      var title = results[i].snippet.title
-      var description = results[i].snippet.description
-      var thumbnail = results[i].snippet.thumbnails.medium.url
+      var videoId = results[i].id.videoId;
+      var date = results[i].snippet.publishedAt;
+      var title = results[i].snippet.title;
+      var description = results[i].snippet.description;
+      var thumbnail = results[i].snippet.thumbnails.medium.url;
       var currentResult = new Result(videoId, date, title, description, thumbnail);
       resultsBuilder(currentResult);
     }
@@ -194,18 +203,10 @@ var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', comme
                           {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
-var searchListener = document.getElementById('searchbutton');
-searchListener.addEventListener('click', function () {
+var formListener = document.getElementById('search-div');
+formListener.addEventListener('submit', function (event) {
   event.preventDefault();
   searchRequest();
-}, false);
-
-var enterListener = document.getElementById('searchquery');
-enterListener.addEventListener('keyup', function(event) {
-  event.preventDefault();
-  if (event.keyCode === 13) {
-    document.getElementById('searchbutton').click();
-  }
 }, false);
 
 var playerListener = document.getElementById('results-list')
