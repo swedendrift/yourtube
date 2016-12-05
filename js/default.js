@@ -1,31 +1,42 @@
-function clearDOM() {
-  var ytContainer = document.getElementById('yt-container');
-  while (ytContainer.firstChild) {
-    ytContainer.removeChild(ytContainer.firstChild);
-  }
-  var searchElements = document.getElementById('results-list');
-  while (searchElements.firstChild) {
-    searchElements.removeChild(searchElements.firstChild);
-  }
-  var echoElements = document.getElementById('alert-echo');
-  while (echoElements.firstChild) {
-    echoElements.removeChild(echoElements.firstChild);
-  }
-  var commentThreads = document.getElementById('comment-threads');
-  while (commentThreads.firstChild) {
-    commentThreads.removeChild(commentThreads.firstChild);
-  }
-  var commentInputContainer = document.getElementById('comment-input-container');
-  while (commentInputContainer.firstChild) {
-    commentInputContainer.removeChild(commentInputContainer.firstChild);
+function cleanDOM() {
+  clearChildren('yt-container');
+  clearChildren('results-list');
+  clearChildren('comment-input-container');
+  clearChildren('comment-threads');
+  var ytDiv = new ElementSeed('div', 'yt-container', 'youtube-player');
+  addElement(ytDiv);
+  var commentsContainer = document.getElementById('comments-container');
+  commentsContainer.classList.add('hidden');
+}
+
+function clearChildren(id) {
+  var element = document.getElementById(id);
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
   }
 }
 
+function addElement(elementSeed) {
+  var newElement = document.createElement(elementSeed.elementType);
+  newElement.setAttribute('id', elementSeed.elementId);
+  newElement.setAttribute('class', elementSeed.classList);
+  var parentNode = document.getElementById(elementSeed.parentId);
+  parentNode.appendChild(newElement);
+}
+
+function ElementSeed(type, parentId, id, classList) {
+  this.elementType = type;
+  this.parentId = parentId;
+  this.elementId = id;
+  this.classList = classList;
+}
+
 function searchRequest() {
-  clearDOM();
+  cleanDOM();
   var queryElement = document.getElementById('searchquery')
   var queryString =  queryElement.value;
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + '&key=AIzaSyCTzbJhZboKUo5J4DX7iMNOTBUXEEIo6pU')
+  queryCollection.push(queryString);
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + );
   if (queryString) {
     $.get(url, function(data) {
       addSearchResults(data.items);
@@ -42,7 +53,6 @@ function addSearchResults(results) {
       var description = results[i].snippet.description
       var thumbnail = results[i].snippet.thumbnails.medium.url
       var currentResult = new Result(videoId, date, title, description, thumbnail);
-      resultsCollection.push(currentResult);
       resultsBuilder(currentResult);
     }
   }
@@ -62,8 +72,10 @@ function resultsBuilder(currentResult) {
   newItem.setAttribute('class', 'results-list-item');
   newItem.setAttribute('id', currentResult.videoId);
   var newImg = document.createElement('img');
+  newImg.setAttribute('data-vid', currentResult.videoId);
   newImg.setAttribute('src', currentResult.thumbUrl);
   var newHeading = document.createElement('p');
+  newHeading.setAttribute('data-vid', currentResult.videoId);
   newHeading.setAttribute('id', 'results-heading');
   var newP = document.createElement('p');
   newP.setAttribute('id', 'results-description');
@@ -78,50 +90,55 @@ function resultsBuilder(currentResult) {
 }
 
 function playVideo(videoId) {
-  clearDOM()
+  cleanDOM()
   var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"'
-  playerBuilder(videoUrl);
+  playerBuilder(videoUrl, videoId);
   comments(videoId)
 }
 
-function playerBuilder(videoUrl) {
-  var resultsContainer = document.getElementById('yt-container')
-  var newIFrame = document.createElement('iframe');
-  newIFrame.setAttribute('id', 'yt-player')
-  newIFrame.setAttribute('width', '640');
-  newIFrame.setAttribute('height', '390');
-  newIFrame.setAttribute('src', videoUrl);
-  resultsContainer.appendChild(newIFrame);
+function playerBuilder(videoUrl, videoId) {
+  new YT.Player('youtube-player', {
+    height: '390',
+    width: '640',
+    videoId: videoId,
+    src: videoUrl,
+    events: {
+      'onReady': onPlayerReady,
+    }
+  });
+}
+
+function onPlayerReady(event) {
+  event.target.playVideo();
 }
 
 function comments(videoId) {
+  var showComments = document.getElementById('comments-container');
+  showComments.classList.remove('hidden');
   commentInputBuilder(videoId);
   findIdMatches(videoId);
 }
 
 function commentInputBuilder(videoId) {
-  var commentsContainer = document.getElementById('comment-input-container');
+  var commentInputContainer = document.getElementById('comment-input-container');
   var commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
+  commentInputDiv.setAttribute('class', 'row');
   var inputBox = document.createElement('input');
+  inputBox.setAttribute('data-videoid', videoId);
+  inputBox.setAttribute('class', 'form-control');
   inputBox.setAttribute('id', 'new-comment');
   inputBox.setAttribute('placeholder', 'Add a comment...');
   inputBox.setAttribute('type', 'text');
-  var inputBtn = document.createElement('input');
-  inputBtn.setAttribute('id', 'comment-btn');
-  inputBtn.setAttribute('data-videoid', videoId);
-  inputBtn.setAttribute('value', 'comment');
-  inputBtn.setAttribute('type', 'button');
-  var hr = document.createElement('hr');
   commentInputDiv.appendChild(inputBox);
-  commentInputDiv.appendChild(inputBtn);
-  commentInputDiv.appendChild(hr);
-  commentsContainer.insertBefore(commentInputDiv, commentsContainer.childNodes[0]);
-  var commentListener = document.getElementById('comment-btn');
-  commentListener.addEventListener('click', function() {
-    event.preventDefault()
-    newComment()
-    , false
+  commentInputContainer.insertBefore(commentInputDiv, commentInputContainer.childNodes[0]);
+  var commentListener = document.getElementById('new-comment');
+  commentListener.addEventListener('keyup', function(event) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+      event.preventDefault();
+      newComment();
+      }
   });
 }
 
@@ -140,24 +157,25 @@ function findIdMatches(videoId) {
 
 function insertComment(commentMatch) {
   var commentThreads = document.getElementById('comment-threads');
-  var newLi = document.createElement('li');
-  var newHeading = document.createElement('h5');
-  var newP = document.createElement('p');
+  var commentLi = document.createElement('li');
+  var commentHeading = document.createElement('p');
+  commentHeading.setAttribute('id', 'comment-heading');
+  var commentP = document.createElement('p');
+  commentP.setAttribute('id', 'comment-p');
   var commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD"));
   var commentText = document.createTextNode(commentMatch.commentString);
-  newHeading.appendChild(commentId);
-  newP.appendChild(commentText);
-  newLi.appendChild(newHeading);
-  newLi.appendChild(newP);
-  commentThreads.insertBefore(newLi, commentThreads.childNodes[0]);
+  commentHeading.appendChild(commentId);
+  commentP.appendChild(commentText);
+  commentLi.appendChild(commentHeading);
+  commentLi.appendChild(commentP);
+  commentThreads.insertBefore(commentLi, commentThreads.childNodes[0]);
 }
 
 function newComment() {
   var commentElement = document.getElementById('new-comment');
   var commentString = commentElement.value;
-  var commentBtn = document.getElementById('comment-btn');
-  var videoId = commentBtn.getAttribute('data-videoid');
-  // var timestamp = Date.now();
+  var inputBox = document.getElementById('new-comment')
+  var videoId = inputBox.getAttribute('data-videoid');
   var datePosted = moment().format('YYYYMMDD');
   var comment = {
     commentString: commentString,
@@ -166,9 +184,10 @@ function newComment() {
   };
   commentsCollection.push(comment);
   insertComment(comment);
+  commentElement.value = "";
 }
 
-var resultsCollection = [];
+var queryCollection = [];
 var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
@@ -181,17 +200,18 @@ searchListener.addEventListener('click', function () {
   searchRequest();
 }, false);
 
-document.getElementById('searchquery')
-    .addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (event.keyCode == 13) {
-        document.getElementById('searchbutton').click();
-    }
-});
+var enterListener = document.getElementById('searchquery');
+enterListener.addEventListener('keyup', function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById('searchbutton').click();
+  }
+}, false);
 
-document.getElementById('results-list').addEventListener('click', function(e) {
-	if(e.target && e.target.nodeName == 'LI') {
+var playerListener = document.getElementById('results-list')
+playerListener.addEventListener('click', function(event) {
+	if(event.target && event.target.dataset.vid) {
     event.preventDefault()
-		playVideo(e.target.id), false
+		playVideo(event.target.dataset.vid), false
 	}
 });

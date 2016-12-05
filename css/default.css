@@ -1,40 +1,69 @@
 body {
   font-family: "Roboto", arial, sans-serif;
+  background-color: #E6E6E6;
 }
 
-input[type="text"] {
+.hidden {
+  display: none;
+}
+
+.div-card {
+  background-color: white;
+  margin: 10px;
+  width: 640px;
+  -webkit-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
+  -moz-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
+  box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
+}
+
+#comments-container {
+  min-height: 100px;
+}
+
+#comment-input-container {
   position: relative;
-  top: -3px;
-  display: inline-block;
-  border : solid 1px #e0e0e0;
-  border-radius: 5px 0px 0px 5px;
-  width: 40%;
-  font-size: 16px;
-  padding: 4px;
+  left: 50px;
+  top: 25px;
+  margin-bottom: 20px;
+  vertical-align: middle;
 }
 
-input[type="button"] {
+#comment-heading {
   position: relative;
-  top: -3px;
-	border: solid 1px #e0e0e0;
-	border-radius: 0px 5px 5px 0px ;
-	font-size: 16px;
-	color: #a9a9a9;
-	padding: 4px;
-  background-color: inherit;
+  left: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #167ac6;
+  margin: 2px 2px 5px 2px;
 }
 
-iframe {
-  margin: 20px;
+#comment-p {
+  padding-left: 30px;
 }
 
-#alert-echo {
-  float: left;
-  padding-top: 20px;
+#comment-threads {
+   list-style-type: none;
+  }
+
+#comment-threads li {
+   padding-bottom:  3px !important;
 }
+
+#comment-threads li:before {
+   padding-top: 10px !important;
+   font-family: 'FontAwesome';
+   content: '\f075';
+   position: relative;
+   top: 20px;
+   left: -15px;
+   color: #666;
+   font-size:10px;
+   z-index: 3;
+  }
 
 #results-heading {
   position: relative;
+  padding-right: 10px;
   left: 10px;
   font-size: 14px;
   font-weight: 500;
@@ -44,6 +73,7 @@ iframe {
 
 #results-description {
   word-wrap: break-word;
+  padding-right: 15px;
   position: relative;
   left: 10px;
   font-size: 12px;
@@ -51,14 +81,9 @@ iframe {
   margin: 0;
 }
 
-#results-container {
-  width: 750px;
-
-}
-
 #results-container ul {
   list-style-type: none;
-  width: 625px;
+  padding: 0;
 }
 
 #results-container li img {
@@ -74,7 +99,6 @@ iframe {
 }
 
 #results-container li:hover {
-  background: #e0e0e0;
   cursor: pointer;
 }
 
@@ -83,9 +107,21 @@ iframe {
   font-size: 24px;
 }
 
-#logo {
-  font-family: 'Roboto Condensed', arial, sans-serif;
-  font-size: 28px;
+#searchquery {
+  width: 50%;
+}
+
+#search-div {
+  float: right;
+}
+
+#new-comment {
+  width: 80%;
   position: relative;
-  margin-right: 50px;
+  left: 15px;
+  padding-bottom: 20px;
+}
+
+#yt-container {
+  max-height: 390px;
 }
