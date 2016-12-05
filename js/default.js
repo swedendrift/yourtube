@@ -36,7 +36,7 @@ function searchRequest() {
   var queryElement = document.getElementById('searchquery')
   var queryString =  queryElement.value;
   queryCollection.push(queryString);
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString +);
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + queryString + );
   if (queryString) {
     $.get(url, function(data) {
       addSearchResults(data.items);
@@ -202,9 +202,8 @@ searchListener.addEventListener('click', function () {
 
 var enterListener = document.getElementById('searchquery');
 enterListener.addEventListener('keyup', function(event) {
-
-  if (event.keyCode == 13) {
-    event.preventDefault();
+  event.preventDefault();
+  if (event.keyCode === 13) {
     document.getElementById('searchbutton').click();
   }
 }, false);
