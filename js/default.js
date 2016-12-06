@@ -46,7 +46,7 @@ function searchRequest() {
     }).then(function(response) {
       var results = response.items;
       if (results.length > 0) {
-      addSearchResults(response.items);
+      addSearchResults(results);
       } else {
         alert('No results found.  Please try again.');
       }
@@ -54,29 +54,33 @@ function searchRequest() {
       alert('An error as occurred. Please try again.')
     });
   }
-  sidebarSearch(queryString);
+  queryCollection.push(queryString);
+  sidebarSearch();
 }
 
-function sidebarSearch(query) {
-  var queryString = query + 'trending now';
-  queryCollection.push(queryString);
-  var url = urlBuilder(queryString);
+function sidebarSearch() {
+  var element = document.getElementById('right-panel');
+  if (element.classList.contains('hidden')) {
+    element.classList.remove('hidden');
+  }
+  var url = urlBuilder(queryCollection[Math.floor(Math.random() * queryCollection.length)]);
+  console.log(url);
   fetch(url).then(function(response) {
     return response.json();
   }).then(function(response) {
-    var results = response.items;
-    if (results.length > 0) {
-      addSideResults(response.items);
-    } else {
-      alert('No results found.  Please try again.');
-    }
+      var results = response.items;
+      if (results.length > 0) {
+        addSideResults(results);
+      } else {
+        alert('No results found.  Please try again.');
+      }
   }).catch(function(error) {
-  //   alert('An error as occurred. Please try again.')
+    alert('An error as occurred. Please try again.')
   });
 }
 
 function urlBuilder(query) {
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + query + );
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + query + '&key=AIzaSyA_2u6-zjkAsPqvNenfF7aBxawdPyBWp_A');
   return url;
 }
 
@@ -122,21 +126,21 @@ function Result(videoId, publishedAt, title, description, thumbnail, medThumbnai
 function sideBuilder (currentResult) {
   var sideList = document.getElementById('side-list');
   var newItem = document.createElement('li');
-  // sideList.setAttribute('class', 'list-group');
-  // newItem.setAttribute('class', 'list-group-item');
+  sideList.setAttribute('class', 'list-group');
+  newItem.setAttribute('class', 'list-group-item');
   newItem.setAttribute('id', currentResult.videoId);
-  var span = document.createElement('span')
   var newImg = document.createElement('img');
-  newImg.setAttribute('data-vid', currentResult.videoId);
+  newImg.setAttribute('class', 'd-inline-block');
+  newImg.setAttribute('data-side', currentResult.videoId);
   newImg.setAttribute('src', currentResult.thumbnail);
   var newTitle = document.createElement('p');
-  newTitle.setAttribute('data-vid', currentResult.videoId);
+  newTitle.setAttribute('class', 'd-inline-block');
+  newTitle.setAttribute('data-side', currentResult.videoId);
   newTitle.setAttribute('id', 'side-title');
   var newTitleText = document.createTextNode(currentResult.title);
   newTitle.appendChild(newTitleText);
-  span.appendChild(newImg);
+  newItem.appendChild(newImg);
   newItem.appendChild(newTitle);
-  newItem.appendChild(span);
   sideList.appendChild(newItem);
 }
 
@@ -164,11 +168,11 @@ function resultsBuilder(currentResult) {
 }
 
 function playVideo(videoId) {
-  cleanDOM()
-  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"'
+  cleanDOM();
+  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"';
   playerBuilder(videoUrl, videoId);
-  // sidebarBuilder()
-  comments(videoId)
+  sidebarSearch();
+  comments(videoId);
 }
 
 function playerBuilder(videoUrl, videoId) {
@@ -265,7 +269,8 @@ function newComment() {
   commentElement.value = "";
 }
 
-var queryCollection = [];
+
+var queryCollection = ['cats', 'surfing', 'birds'];
 var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
@@ -283,5 +288,13 @@ playerListener.addEventListener('click', function(event) {
 	if(event.target && event.target.dataset.vid) {
     event.preventDefault()
 		playVideo(event.target.dataset.vid), false
+	}
+});
+
+var sideListener = document.getElementById('side-list')
+sideListener.addEventListener('click', function(event) {
+	if(event.target && event.target.dataset.side) {
+    event.preventDefault()
+		playVideo(event.target.dataset.side), false
 	}
 });
