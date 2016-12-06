@@ -20,10 +20,12 @@ body {
 }
 
 #comments-container {
+  position: absolute;
+  top: 475px;
   width: 640px;
   min-height: 100px;
   margin: 15px 15px 15px 15px;
-  float: left;
+
 }
 
 #comment-input-container {

@@ -64,7 +64,6 @@ function sidebarSearch() {
     element.classList.remove('hidden');
   }
   var url = urlBuilder(queryCollection[Math.floor(Math.random() * queryCollection.length)]);
-  console.log(url);
   fetch(url).then(function(response) {
     return response.json();
   }).then(function(response) {
