@@ -46,7 +46,7 @@ function searchRequest() {
     }).then(function(response) {
       var results = response.items;
       if (results.length > 0) {
-      addSearchResults(results);
+      addResults(results, resultsBuilder);
       } else {
         alert('No results found.  Please try again.');
       }
@@ -60,16 +60,16 @@ function searchRequest() {
 
 function sidebarSearch() {
   var element = document.getElementById('right-panel');
-  if (element.classList.contains('hidden')) {
-    element.classList.remove('hidden');
-  }
   var url = urlBuilder(queryCollection[Math.floor(Math.random() * queryCollection.length)]);
   fetch(url).then(function(response) {
     return response.json();
   }).then(function(response) {
       var results = response.items;
       if (results.length > 0) {
-        addSideResults(results);
+        addResults(results, sideBuilder);
+        if (element.classList.contains('hidden')) {
+          element.classList.remove('hidden');
+        }
       } else {
         alert('No results found.  Please try again.');
       }
@@ -83,22 +83,8 @@ function urlBuilder(query) {
   return url;
 }
 
-function addSideResults(results) {
-  for (var i = 0; i < results.length; i++) {
-    if (results[i].id.kind === 'youtube#video') {
-      var videoId = results[i].id.videoId;
-      var date = results[i].snippet.publishedAt;
-      var title = results[i].snippet.title;
-      var description = results[i].snippet.description;
-      var medThumbnail = results[i].snippet.thumbnails.medium.url;
-      var thumbnail = results[i].snippet.thumbnails.default.url;
-      var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
-      sideBuilder(currentResult);
-    }
-  }
-}
 
-function addSearchResults(results) {
+function addResults(results, addTo) {
   for (var i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
       var videoId = results[i].id.videoId;
@@ -108,7 +94,7 @@ function addSearchResults(results) {
       var medThumbnail = results[i].snippet.thumbnails.medium.url;
       var thumbnail = results[i].snippet.thumbnails.default.url;
       var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
-      resultsBuilder(currentResult);
+      addTo(currentResult);
     }
   }
 }
