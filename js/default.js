@@ -35,7 +35,7 @@ function searchRequest() {
         alert('No results found.  Please try again.');
       }
     }).catch(function(error) {
-      alert('An error as occurred. Please try again.')
+      alert('An error as occurred: ' + error);
     });
   }
   queryCollection.push(queryString);
@@ -58,7 +58,7 @@ function sidebarSearch() {
         alert('No results found.  Please try again.');
       }
   }).catch(function(error) {
-    alert('An error as occurred. Please try again.')
+    alert('An error as occurred: ' + error);
   });
 }
 
