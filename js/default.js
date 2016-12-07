@@ -63,7 +63,7 @@ function sidebarSearch() {
 }
 
 function urlBuilder(query) {
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=' + query + '&key=AIzaSyA_2u6-zjkAsPqvNenfF7aBxawdPyBWp_A');
+  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=8&q=' + query + '&key=AIzaSyA_2u6-zjkAsPqvNenfF7aBxawdPyBWp_A');
   return url;
 }
 
@@ -244,7 +244,7 @@ function newComment() {
 }
 
 
-var queryCollection = ['cats', 'surfing', 'birds'];
+var queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
 var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},

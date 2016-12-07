@@ -8,13 +8,16 @@ body {
 .div-card {
   max-width: 640px;
   background-color: white;
+  border: 1px grey;
   -webkit-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
   -moz-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
   box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
 }
 .list-group-item:first-child {
-    border-top-right-radius: 0px;
-    border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
 }
 
 #comments-container {
@@ -22,13 +25,16 @@ body {
   top: 475px;
   width: 640px;
   min-height: 100px;
-  margin: 15px;
+  margin-top: 15px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  margin-left: 30px;
 }
 
 #comment-input-container {
 
   position: relative;
-  left: 50px;
+  left: 65px;
   top: 25px;
   margin: 0;
   padding-bottom: 20px;
@@ -92,7 +98,7 @@ body {
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 15px;
-  margin-left: 15px;
+  margin-left: 30px;
 }
 
 #results-panel ul {
@@ -121,7 +127,7 @@ body {
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 15px;
-  margin-left: 0px;
+  margin-left: 10px;
   width: 350px;
   -webkit-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
   -moz-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
@@ -184,7 +190,7 @@ body {
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 0;
-  margin-left: 15px;
+  margin-left: 30px;
   float: left;
   max-height: 390px;
   width: 640px;
