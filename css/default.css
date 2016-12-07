@@ -20,10 +20,11 @@ body {
 }
 
 #comments-container {
+  position: absolute;
+  top: 475px;
   width: 640px;
   min-height: 100px;
   margin: 15px 15px 15px 15px;
-  float: left;
 }
 
 #comment-input-container {
@@ -88,34 +89,33 @@ body {
   margin: 0;
 }
 
-#results-container{
+#results-panel{
   float: left;
-  /*top: 40px;*/
   margin: 0px 15px 15px 15px;
 }
 
-#results-container ul {
+#results-panel ul {
   list-style-type: none;
   padding: 0;
 }
 
-#results-container li img {
+#results-panel li img {
   width: 196px;
   height:110px;
   float: left;
   margin: 0
 }
 
-#results-container li {
+#results-panel li {
   padding: 10px;
   overflow: auto;
 }
 
-#results-container li:hover {
+#results-panel li:hover {
   cursor: pointer;
 }
 
-#right-panel {
+#side-panel {
   position: absolute;
   left: 690px;
   background-color: white;
@@ -126,12 +126,12 @@ body {
   box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
 }
 
-#right-panel ul {
+#side-panel ul {
   list-style-type: none;
   padding: 0px;
 }
 
-#right-panel p {
+#side-panel p {
   width: 200px;
   padding-left: 10px;
   margin: 0;
@@ -145,19 +145,19 @@ body {
 
 }
 
-#right-panel li img {
+#side-panel li img {
   width: 120px;
   height: 90px;
 
 }
 
-#right-panel li {
+#side-panel li {
   padding: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-#right-panel li:hover {
+#side-panel li:hover {
   cursor: pointer;
 }
 
@@ -188,7 +188,7 @@ body {
 }
 
 @media only screen and (max-width: 1010px) {
-  #right-panel {
+  #side-panel {
     display: none;
   }
 }

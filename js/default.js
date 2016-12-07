@@ -1,11 +1,10 @@
 function cleanDOM() {
   clearChildren('yt-container');
-  clearChildren('side-list')
-  clearChildren('results-list');
+  clearChildren('side-panel')
+  clearChildren('results-panel');
   clearChildren('comment-input-container');
   clearChildren('comment-threads');
-  var ytDiv = new ElementSeed('div', 'yt-container', 'youtube-player');
-  addElement(ytDiv);
+  ytBuilder();
   var commentsContainer = document.getElementById('comments-container');
   commentsContainer.classList.add('hidden');
   var player = document.getElementById('yt-container');
@@ -17,21 +16,6 @@ function clearChildren(id) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
   }
-}
-
-function addElement(elementSeed) {
-  var newElement = document.createElement(elementSeed.elementType);
-  newElement.setAttribute('id', elementSeed.elementId);
-  newElement.setAttribute('class', elementSeed.classList);
-  var parentNode = document.getElementById(elementSeed.parentId);
-  parentNode.appendChild(newElement);
-}
-
-function ElementSeed(type, parentId, id, classList) {
-  this.elementType = type;
-  this.parentId = parentId;
-  this.elementId = id;
-  this.classList = classList;
 }
 
 function searchRequest() {
@@ -46,7 +30,7 @@ function searchRequest() {
     }).then(function(response) {
       var results = response.items;
       if (results.length > 0) {
-      addSearchResults(results);
+      addResults(results, resultsBuilder);
       } else {
         alert('No results found.  Please try again.');
       }
@@ -59,18 +43,17 @@ function searchRequest() {
 }
 
 function sidebarSearch() {
-  var element = document.getElementById('right-panel');
-  if (element.classList.contains('hidden')) {
-    element.classList.remove('hidden');
-  }
+  var element = document.getElementById('side-panel');
   var url = urlBuilder(queryCollection[Math.floor(Math.random() * queryCollection.length)]);
-  console.log(url);
   fetch(url).then(function(response) {
     return response.json();
   }).then(function(response) {
       var results = response.items;
       if (results.length > 0) {
-        addSideResults(results);
+        addResults(results, sideBuilder);
+        if (element.classList.contains('hidden')) {
+          element.classList.remove('hidden');
+        }
       } else {
         alert('No results found.  Please try again.');
       }
@@ -84,7 +67,7 @@ function urlBuilder(query) {
   return url;
 }
 
-function addSideResults(results) {
+function addResults(results, addTo) {
   for (var i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
       var videoId = results[i].id.videoId;
@@ -94,22 +77,7 @@ function addSideResults(results) {
       var medThumbnail = results[i].snippet.thumbnails.medium.url;
       var thumbnail = results[i].snippet.thumbnails.default.url;
       var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
-      sideBuilder(currentResult);
-    }
-  }
-}
-
-function addSearchResults(results) {
-  for (var i = 0; i < results.length; i++) {
-    if (results[i].id.kind === 'youtube#video') {
-      var videoId = results[i].id.videoId;
-      var date = results[i].snippet.publishedAt;
-      var title = results[i].snippet.title;
-      var description = results[i].snippet.description;
-      var medThumbnail = results[i].snippet.thumbnails.medium.url;
-      var thumbnail = results[i].snippet.thumbnails.default.url;
-      var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
-      resultsBuilder(currentResult);
+      addTo(currentResult);
     }
   }
 }
@@ -123,48 +91,54 @@ function Result(videoId, publishedAt, title, description, thumbnail, medThumbnai
   this.medThumbnail = medThumbnail;
 }
 
+function createElement(tagName, attributes, children) {
+  var element = document.createElement(tagName)
+  for (var key in attributes) {
+    element.setAttribute(key, attributes[key])
+  }
+  for (var i = 0; i < children.length; i++) {
+    var child = children[i]
+    if (child instanceof Element) {
+      element.appendChild(child)
+    }
+    else {
+      element.appendChild(document.createTextNode(child))
+    }
+  }
+  return element
+}
+
+
 function sideBuilder (currentResult) {
-  var sideList = document.getElementById('side-list');
-  var newItem = document.createElement('li');
-  sideList.setAttribute('class', 'list-group');
-  newItem.setAttribute('class', 'list-group-item');
-  newItem.setAttribute('id', currentResult.videoId);
-  var newImg = document.createElement('img');
-  newImg.setAttribute('class', 'd-inline-block');
-  newImg.setAttribute('data-side', currentResult.videoId);
-  newImg.setAttribute('src', currentResult.thumbnail);
-  var newTitle = document.createElement('p');
-  newTitle.setAttribute('class', 'd-inline-block');
-  newTitle.setAttribute('data-side', currentResult.videoId);
-  newTitle.setAttribute('id', 'side-title');
-  var newTitleText = document.createTextNode(currentResult.title);
-  newTitle.appendChild(newTitleText);
-  newItem.appendChild(newImg);
-  newItem.appendChild(newTitle);
-  sideList.appendChild(newItem);
+  var sideItem =
+      createElement('ul', { class: 'list-group', id: 'side-list' },[
+        createElement('li', { class: 'list-group-item', id: currentResult.videoId }, [
+          createElement('img', { class: 'd-inline-block', 'data-side': currentResult.videoId, src: currentResult.thumbnail },[]),
+          createElement('p', { class: 'd-inline-block', 'data-side': currentResult.videoId, id: 'side-title' }, [currentResult.title])
+        ]),
+      ])
+  var side = document.getElementById('side-panel');
+  side.appendChild(sideItem);
+  document.getElementById('side-panel').className = 'hidden';
 }
 
 function resultsBuilder(currentResult) {
-  var resultsList = document.getElementById('results-list');
-  var newItem = document.createElement('li');
-  newItem.setAttribute('class', 'results-list-item');
-  newItem.setAttribute('id', currentResult.videoId);
-  var newImg = document.createElement('img');
-  newImg.setAttribute('data-vid', currentResult.videoId);
-  newImg.setAttribute('src', currentResult.medThumbnail);
-  var newHeading = document.createElement('p');
-  newHeading.setAttribute('data-vid', currentResult.videoId);
-  newHeading.setAttribute('id', 'results-heading');
-  var newP = document.createElement('p');
-  newP.setAttribute('id', 'results-description');
-  var newHeadingText = document.createTextNode(currentResult.title);
-  var newDescription = document.createTextNode(currentResult.description);
-  newP.appendChild(newDescription);
-  newHeading.appendChild(newHeadingText);
-  newItem.appendChild(newImg);
-  newItem.appendChild(newHeading);
-  newItem.appendChild(newP);
-  resultsList.appendChild(newItem);
+  var resultItem =
+      createElement('ul', { class: 'list-group', id: 'results-list' }, [
+        createElement('li', { class: 'results-list-item', id: currentResult.videoId }, [
+          createElement('img', { 'data-vid': currentResult.videoId, src: currentResult.medThumbnail }, []),
+          createElement('p', { 'data-vid': currentResult.videoId, id: 'results-heading' }, [currentResult.title]),
+          createElement('p', { 'data-vid': currentResult.videoId, id: 'results-description' }, [currentResult.description])
+        ]),
+      ])
+  var result = document.getElementById('results-panel');
+  result.appendChild(resultItem);
+}
+
+function ytBuilder () {
+  var ytDiv = createElement('div', { id: 'youtube-player' }, []);
+  var ytContainer = document.getElementById('yt-container');
+  ytContainer.appendChild(ytDiv);
 }
 
 function playVideo(videoId) {
@@ -283,7 +257,7 @@ formListener.addEventListener('submit', function (event) {
   searchRequest();
 }, false);
 
-var playerListener = document.getElementById('results-list')
+var playerListener = document.getElementById('results-panel')
 playerListener.addEventListener('click', function(event) {
 	if(event.target && event.target.dataset.vid) {
     event.preventDefault()
@@ -291,7 +265,7 @@ playerListener.addEventListener('click', function(event) {
 	}
 });
 
-var sideListener = document.getElementById('side-list')
+var sideListener = document.getElementById('side-panel')
 sideListener.addEventListener('click', function(event) {
 	if(event.target && event.target.dataset.side) {
     event.preventDefault()
