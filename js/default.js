@@ -9,6 +9,8 @@ function cleanDOM() {
   clearChildren('card-deck-wrapper')
   ytBuilder();
 
+  const results = document.getElementById('results-panel');
+  results.classList.remove('hidden');
   var wrapper = document.getElementById('card-deck-wrapper');
   wrapper.classList.add('hidden');
   var player = document.getElementById('yt-container');
@@ -283,6 +285,10 @@ var formListener = document.getElementById('search-div');
 formListener.addEventListener('submit', (event)  => {
   event.preventDefault();
   cleanDOM();
+  var showComments = document.getElementById('comments-container');
+  showComments.classList.add('hidden');
+  const results = document.getElementById('results-panel');
+  results.classList.remove('hidden');
   const queryElement = document.getElementById('searchquery')
   let queryString = queryElement.value;
   let thenable = search(queryString);
