@@ -1,12 +1,16 @@
+/* functions for cleaning the DOM between queries */
+
 function cleanDOM() {
   clearChildren('yt-container');
   clearChildren('side-panel')
   clearChildren('results-panel');
   clearChildren('comment-input-container');
   clearChildren('comment-threads');
+  clearChildren('card-deck-wrapper')
   ytBuilder();
-  var commentsContainer = document.getElementById('comments-container');
-  commentsContainer.classList.add('hidden');
+
+  var wrapper = document.getElementById('card-deck-wrapper');
+  wrapper.classList.add('hidden');
   var player = document.getElementById('yt-container');
   player.classList.add('hidden');
 }
@@ -18,56 +22,25 @@ function clearChildren(id) {
   }
 }
 
-function searchRequest() {
-  cleanDOM();
-  var queryElement = document.getElementById('searchquery')
-  var queryString =  queryElement.value;
-  if (queryString) {
-    queryCollection.push(queryString);
-    var url = urlBuilder(queryString);
-    fetch(url).then(function(response) {
-      return response.json();
-    }).then(function(response) {
-      var results = response.items;
-      if (results.length > 0) {
-      addResults(results, resultsBuilder);
-      } else {
-        alert('No results found.  Please try again.');
-      }
-    }).catch(function(error) {
-      alert('An error as occurred: ' + error);
-    });
-  }
-  queryCollection.push(queryString);
-  sidebarSearch();
-}
-
-function sidebarSearch() {
-  var element = document.getElementById('side-panel');
-  var url = urlBuilder(queryCollection[Math.floor(Math.random() * queryCollection.length)]);
-  fetch(url).then(function(response) {
+function search(query) {
+  var url = urlBuilder(query);
+  // to get the data out instead of having to chain everything
+  // i return the promise to the calling function
+  return fetch(url).then(function(response) {
+    // when the data comes back the JSON is parsed and passed back
     return response.json();
-  }).then(function(response) {
-      var results = response.items;
-      if (results.length > 0) {
-        addResults(results, sideBuilder);
-        if (element.classList.contains('hidden')) {
-          element.classList.remove('hidden');
-        }
-      } else {
-        alert('No results found.  Please try again.');
-      }
   }).catch(function(error) {
-    alert('An error as occurred: ' + error);
+    console.log(error);
   });
 }
 
 function urlBuilder(query) {
-  var url = encodeURI('https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=8&q=' + query + '&key=AIzaSyA_2u6-zjkAsPqvNenfF7aBxawdPyBWp_A');
+  var url = encodeURI(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=14&q=${query}&key=AIzaSyCDEG4XU4P6_ehUfsxUo2b1_kA3H9DoQp0`);
   return url;
 }
 
-function addResults(results, addTo) {
+function addResults(results) {
+  myResults = [];
   for (var i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
       var videoId = results[i].id.videoId;
@@ -77,9 +50,10 @@ function addResults(results, addTo) {
       var medThumbnail = results[i].snippet.thumbnails.medium.url;
       var thumbnail = results[i].snippet.thumbnails.default.url;
       var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
-      addTo(currentResult);
+      myResults.push(currentResult);
     }
   }
+  return myResults;
 }
 
 function Result(videoId, publishedAt, title, description, thumbnail, medThumbnail) {
@@ -108,45 +82,72 @@ function createElement(tagName, attributes, children) {
   return element
 }
 
-
-function sideBuilder (currentResult) {
-  var sideItem =
-      createElement('ul', { class: 'list-group', id: 'side-list' },[
-        createElement('li', { class: 'list-group-item', id: currentResult.videoId }, [
-          createElement('img', { class: 'd-inline-block', 'data-side': currentResult.videoId, src: currentResult.thumbnail },[]),
-          createElement('p', { class: 'd-inline-block', 'data-side': currentResult.videoId, id: 'side-title' }, [currentResult.title])
-        ]),
-      ])
-  var side = document.getElementById('side-panel');
-  side.appendChild(sideItem);
-  document.getElementById('side-panel').className = 'hidden';
+function cardDeckBuilder (results) {
+  if (results.length > 0) {
+    var deckOne = results.slice(0, 4);
+    addCards(deckOne);
+    var deckTwo = results.slice(4, 8);
+    addCards(deckTwo);
+    if (results.slice(8).length > 3) {
+      var deckThree = results.slice(8, 12);
+      addCards(deckThree);
+    } else if (results.slice(8).length < 3) {
+      var deckThree = results.slice(8);
+      addCards(deckThree);
+    }
+    function addCards(deck) {
+      var cardDeck = createElement('div', { class: 'card-deck' },[]);
+      for (var i = 0; i < deck.length; i++) {
+        var cardItem =
+            createElement('div', { class: 'card deck-cards' },[
+              createElement('img', { 'data-vid': results[i].videoId, class: 'card-img-top card-dimensions ', src: deck[i].medThumbnail}, []),
+              createElement('div', { class: 'card-block card-dimensions' }, [
+                createElement('h6', { 'data-vid': results[i].videoId, class: 'card-title' }, [deck[i].title]),
+              ]),
+            ]);
+        cardDeck.appendChild(cardItem);
+      }
+      var wrapper = document.getElementById('card-deck-wrapper');
+      wrapper.appendChild(cardDeck);
+    }
+  }
 }
 
-function resultsBuilder(currentResult) {
-  var resultItem =
-      createElement('ul', { class: 'list-group', id: 'results-list' }, [
-        createElement('li', { class: 'results-list-item', id: currentResult.videoId }, [
-          createElement('img', { 'data-vid': currentResult.videoId, src: currentResult.medThumbnail }, []),
-          createElement('p', { 'data-vid': currentResult.videoId, id: 'results-heading' }, [currentResult.title]),
-          createElement('p', { 'data-vid': currentResult.videoId, id: 'results-description' }, [currentResult.description])
-        ]),
-      ])
-  var result = document.getElementById('results-panel');
-  result.appendChild(resultItem);
+function resultsBuilder(results) {
+  for (let i = 0; i < results.length; i++) {
+    let resultItem =
+        createElement('ul', { class: 'list-group', id: 'results-list' }, [
+          createElement('li', { class: 'results-list-item', id: results[i].videoId }, [
+            createElement('img', { 'data-vid': results[i].videoId, src: results[i].medThumbnail }, []),
+            createElement('p', { 'data-vid': results[i].videoId, id: 'results-heading' }, [results[i].title]),
+            createElement('p', { 'data-vid': results[i].videoId, id: 'results-description' }, [results[i].description])
+          ]),
+        ])
+    let resultsPanel = document.getElementById('results-panel');
+    resultsPanel.appendChild(resultItem);
+  }
+}
+
+function sideBuilder (results) {
+  for (let i = 0; i < results.length; i++) {
+    var sideItem =
+        createElement('ul', { class: 'list-group', id: 'side-list' },[
+          createElement('li', { class: 'list-group-item', id: results[i].videoId }, [
+            createElement('img', { class: 'd-inline-block', 'data-vid': results[i].videoId, src: results[i].thumbnail },[]),
+            createElement('p', { class: 'd-inline-block', 'data-vid': results[i].videoId, id: 'side-title' }, [results[i].title])
+          ]),
+        ])
+    const side = document.getElementById('side-panel');
+    side.appendChild(sideItem);
+  }
+  let unhideSide = document.getElementById('side-panel');
+  unhideSide.classList.remove('hidden');
 }
 
 function ytBuilder () {
   var ytDiv = createElement('div', { id: 'youtube-player' }, []);
   var ytContainer = document.getElementById('yt-container');
   ytContainer.appendChild(ytDiv);
-}
-
-function playVideo(videoId) {
-  cleanDOM();
-  var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"';
-  playerBuilder(videoUrl, videoId);
-  sidebarSearch();
-  comments(videoId);
 }
 
 function playerBuilder(videoUrl, videoId) {
@@ -166,6 +167,26 @@ function playerBuilder(videoUrl, videoId) {
 function onPlayerReady(event) {
   event.target.playVideo();
 }
+
+function playVideo(videoId) {
+  cleanDOM();
+  var videoUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"`;
+  playerBuilder(videoUrl, videoId);
+  sideSearch()
+  comments(videoId);
+}
+
+function sideSearch() {
+  var element = document.getElementById('side-panel');
+  var sidebarQuery = queryCollection[Math.floor(Math.random() * queryCollection.length)];
+  let thenable = search(sidebarQuery);
+  thenable.then(function(response) {
+    var formattedResults = addResults(response.items);
+    sideBuilder(formattedResults);
+  });
+}
+
+/* this begins the commenting section */
 
 function comments(videoId) {
   var showComments = document.getElementById('comments-container');
@@ -244,6 +265,7 @@ function newComment() {
 }
 
 
+
 var queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
 var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
@@ -251,24 +273,29 @@ var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', comme
                           {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
+var thenable = search('the best of 2016');
+thenable.then(function(response) {
+  var formattedResults = addResults(response.items);
+  cardDeckBuilder(formattedResults);
+});
+
 var formListener = document.getElementById('search-div');
-formListener.addEventListener('submit', function (event) {
+formListener.addEventListener('submit', (event)  => {
   event.preventDefault();
-  searchRequest();
+  cleanDOM();
+  const queryElement = document.getElementById('searchquery')
+  let queryString = queryElement.value;
+  let thenable = search(queryString);
+  thenable.then(function(response) {
+    var formattedResults = addResults(response.items);
+    resultsBuilder(formattedResults);
+  });
+  sideSearch();
 }, false);
 
-var playerListener = document.getElementById('results-panel')
-playerListener.addEventListener('click', function(event) {
+document.body.addEventListener('click', (event)  => {
 	if(event.target && event.target.dataset.vid) {
     event.preventDefault()
 		playVideo(event.target.dataset.vid), false
-	}
-});
-
-var sideListener = document.getElementById('side-panel')
-sideListener.addEventListener('click', function(event) {
-	if(event.target && event.target.dataset.side) {
-    event.preventDefault()
-		playVideo(event.target.dataset.side), false
 	}
 });
