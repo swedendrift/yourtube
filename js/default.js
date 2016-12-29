@@ -10,25 +10,26 @@ function cleanDOM() {
   clearChildren('card-deck-wrapper')
   ytBuilder();
 
-  var wrapper = document.getElementById('card-deck-wrapper');
+  const results = document.getElementById('results-panel');
+  results.classList.remove('hidden');
+  const hideComments = document.getElementById('comments-container');
+  hideComments.classList.add('hidden');
+  const wrapper = document.getElementById('card-deck-wrapper');
   wrapper.classList.add('hidden');
-  var player = document.getElementById('yt-container');
+  const player = document.getElementById('yt-container');
   player.classList.add('hidden');
 }
 
 function clearChildren(id) {
-  var element = document.getElementById(id);
+  const element = document.getElementById(id);
   while (element.firstChild) {
     element.removeChild(element.firstChild);
   }
 }
 
 function search(query) {
-  var url = urlBuilder(query);
-  // to get the data out instead of having to chain everything
-  // i return the promise to the calling function
+  const url = urlBuilder(query);
   return fetch(url).then(function(response) {
-    // when the data comes back the JSON is parsed and passed back
     return response.json();
   }).catch(function(error) {
     console.log(error);
@@ -36,13 +37,13 @@ function search(query) {
 }
 
 function urlBuilder(query) {
-  var url = encodeURI(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=14&q=${query}&key=${API_KEY}`);
+  const url = encodeURI(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=14&q=${query}&key=${API_KEY}`);
   return url;
 }
 
 function addResults(results) {
   const myResults = [];
-  for (var i = 0; i < results.length; i++) {
+  for (let i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
       var videoId = results[i].id.videoId;
       var date = results[i].snippet.publishedAt;
@@ -67,12 +68,12 @@ function Result(videoId, publishedAt, title, description, thumbnail, medThumbnai
 }
 
 function createElement(tagName, attributes, children) {
-  var element = document.createElement(tagName)
-  for (var key in attributes) {
+  const element = document.createElement(tagName)
+  for (let key in attributes) {
     element.setAttribute(key, attributes[key])
   }
   for (var i = 0; i < children.length; i++) {
-    var child = children[i]
+    let child = children[i]
     if (child instanceof Element) {
       element.appendChild(child)
     }
@@ -85,30 +86,30 @@ function createElement(tagName, attributes, children) {
 
 function cardDeckBuilder (results) {
   if (results.length > 0) {
-    var deckOne = results.slice(0, 4);
+    const deckOne = results.slice(0, 4);
     addCards(deckOne);
-    var deckTwo = results.slice(4, 8);
+    const deckTwo = results.slice(4, 8);
     addCards(deckTwo);
     if (results.slice(8).length > 3) {
-      var deckThree = results.slice(8, 12);
+      const deckThree = results.slice(8, 12);
       addCards(deckThree);
     } else if (results.slice(8).length < 3) {
-      var deckThree = results.slice(8);
+      const deckThree = results.slice(8);
       addCards(deckThree);
     }
     function addCards(deck) {
-      var cardDeck = createElement('div', { class: 'card-deck' },[]);
-      for (var i = 0; i < deck.length; i++) {
-        var cardItem =
+      const cardDeck = createElement('div', { class: 'card-deck' },[]);
+      for (let i = 0; i < deck.length; i++) {
+        const cardItem =
             createElement('div', { class: 'card deck-cards' },[
-              createElement('img', { 'data-vid': results[i].videoId, class: 'card-img-top card-dimensions ', src: deck[i].medThumbnail}, []),
+              createElement('img', { 'data-vid': deck[i].videoId, class: 'card-img-top card-dimensions ', src: deck[i].medThumbnail}, []),
               createElement('div', { class: 'card-block card-dimensions' }, [
-                createElement('h6', { 'data-vid': results[i].videoId, class: 'card-title' }, [deck[i].title]),
+                createElement('h6', { 'data-vid': deck[i].videoId, class: 'card-title' }, [deck[i].title]),
               ]),
             ]);
         cardDeck.appendChild(cardItem);
       }
-      var wrapper = document.getElementById('card-deck-wrapper');
+      const wrapper = document.getElementById('card-deck-wrapper');
       wrapper.appendChild(cardDeck);
     }
   }
