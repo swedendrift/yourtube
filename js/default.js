@@ -1,4 +1,5 @@
 /* functions for cleaning the DOM between queries */
+const API_KEY = 'AIzaSyA8kjmQJSIFArR2oGJQeN0fyEdY320Y8dM'
 
 function cleanDOM() {
   clearChildren('yt-container');
@@ -35,12 +36,12 @@ function search(query) {
 }
 
 function urlBuilder(query) {
-  var url = encodeURI(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=14&q=${query}&key=AIzaSyCDEG4XU4P6_ehUfsxUo2b1_kA3H9DoQp0`);
+  var url = encodeURI(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=14&q=${query}&key=${API_KEY}`);
   return url;
 }
 
 function addResults(results) {
-  myResults = [];
+  const myResults = [];
   for (var i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
       var videoId = results[i].id.videoId;
