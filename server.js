@@ -7,13 +7,13 @@ const PORT = process.env.PORT || 3000
 const app = express()
 const jsonParser = bodyParser.json()
 
+// add a middleware to validate that the params are included and redirect back to the page if not
 
 app.get('/comments/:videoid', jsonParser, (req, res) => {
   if (!req.body) {
-    return res.sendStatus(400)
+    res.status(400).send('Error: no videoid specified')
   } else {
     knex('comments')
-    // .returning(['videoid', 'dateposted', 'commentstring'])
     .where('videoid', req.params.videoid)
     .then(data => {
       res.status(201).json(data)
@@ -21,52 +21,38 @@ app.get('/comments/:videoid', jsonParser, (req, res) => {
   }
 })
 
-// knex('comments').where('videoid', req.params.videoid)
+app.post('/comments', jsonParser, (req, res) => {
+  if (!req.body) {
+    return res.sendStatus(400)
+  } else {
+    knex.insert({
+      videoid: req.body['videoid'],
+      dateposted: req.body['dateposted'],
+      commentstring: req.body['commentstring']
+    })
+    .returning(['videoid', 'dateposted', 'commentstring'])
+    .into('comments')
+    .then(id => {
+      res.status(201).json(id[0])
+    });
+  }
+})
 
-// app.post('/comments', jsonParser, (req, res) => {
-//   if (!req.body) {
-//     return res.sendStatus(400)
-//   } else {
-//     knex.insert({
-//       name: req.body['name']
-//     })
-//     .returning(['id', 'name'])
-//     .into('authors')
-//     .then(id => {
-//       res.status(201).json(id[0])
-//     });
-//   }
-// })
+// need to evaluate better ways to identify commnet to be deleted
 
-// app.put('/comments/:id', jsonParser, (req, res) => {
-//   if (!req.body) {
-//     return res.sendStatus(400)
-//   } else {
-//     knex('authors')
-//     .returning('name')
-//     .update({
-//       name: req.body['name']
-//     })
-//     .where('id', req.params.id)
-//     .then(name => {
-//       res.status(201).json(name[0])
-//     });
-//   }
-// })
-
-// app.delete('/comments/:id', jsonParser, (req, res) => {
-//   if (!req.body) {
-//     return res.sendStatus(400)
-//   } else {
-//     knex('authors')
-//     .returning(['id', 'name'])
-//     .del()
-//     .where('id', req.params.id)
-//     .then(id => {
-//       res.status(201).json(id[0])
-//     });
-//   }
-// })
+app.delete('/comments/:id', jsonParser, (req, res) => {
+  if (!req.body) {
+    return res.sendStatus(400)
+  } else {
+    knex('comments')
+    .returning(['videoid', 'dateposted', 'commentstring'])
+    .del()
+    .where('id', req.params.id)
+    .then(id => {
+      res.status(201).json(id[0])
+    });
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

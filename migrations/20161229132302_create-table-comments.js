@@ -1,8 +1,8 @@
 exports.up = function(knex, Promise) {
   const query = knex.schema.createTable('comments', table => {
     table.increments('id')
-    table.timestamp('dateposted')
     table.string('videoid')
+    table.timestamp('dateposted')
     table.string('commentstring')
   })
   return query

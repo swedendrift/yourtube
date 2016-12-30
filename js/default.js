@@ -1,5 +1,5 @@
 /* functions for cleaning the DOM between queries */
-const API_KEY = 'AIzaSyA8kjmQJSIFArR2oGJQeN0fyEdY320Y8dM'
+const API_KEY = 
 
 function cleanDOM() {
   clearChildren('yt-container');
@@ -264,15 +264,6 @@ function newComment() {
   insertComment(comment);
   commentElement.value = "";
 }
-
-
-INSERT INTO comments (videoId, datePosted, commentString) VALUES
-    ('tntOCGkgt98', '20160907', 'this is the coolest site ever'),
-    ('G8KpPw303PY', '20160206', 'this is the gnarliest site ever'),
-    ('htOroIbxiFY', '20140601', 'this is the sickest site ever'),
-    ('tntOCGkgt98', '20140519', 'this is the baddest site ever'),
-    ('htOroIbxiFY', '20131231', 'this is the raddest site ever');
-
 
 const queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
 const commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
