@@ -1,0 +1,23 @@
+{
+  "name": "yourtube",
+  "version": "1.0.0",
+  "description": "YouTube Data API sample site",
+  "main": "server.js",
+  "scripts": {
+    "migrate:make": "knex migrate:make",
+    "migrate": "knex migrate:latest",
+    "rollback": "knex migrate:rollback"
+  },
+  "keywords": [],
+  "author": "Erick Lee",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "knex": "^0.12.6",
+    "pg": "^6.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}

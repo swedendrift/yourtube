@@ -32,7 +32,7 @@ function search(query) {
   return fetch(url).then(function(response) {
     return response.json();
   }).catch(function(error) {
-    console.log(error);
+    alert(`There was an error with your request: ${error}`);
   });
 }
 
@@ -117,7 +117,7 @@ function cardDeckBuilder (results) {
 
 function resultsBuilder(results) {
   for (let i = 0; i < results.length; i++) {
-    let resultItem =
+    const resultItem =
         createElement('ul', { class: 'list-group', id: 'results-list' }, [
           createElement('li', { class: 'results-list-item', id: results[i].videoId }, [
             createElement('img', { 'data-vid': results[i].videoId, src: results[i].medThumbnail }, []),
@@ -125,14 +125,14 @@ function resultsBuilder(results) {
             createElement('p', { 'data-vid': results[i].videoId, id: 'results-description' }, [results[i].description])
           ]),
         ])
-    let resultsPanel = document.getElementById('results-panel');
+    const resultsPanel = document.getElementById('results-panel');
     resultsPanel.appendChild(resultItem);
   }
 }
 
 function sideBuilder (results) {
   for (let i = 0; i < results.length; i++) {
-    var sideItem =
+    const sideItem =
         createElement('ul', { class: 'list-group', id: 'side-list' },[
           createElement('li', { class: 'list-group-item', id: results[i].videoId }, [
             createElement('img', { class: 'd-inline-block', 'data-vid': results[i].videoId, src: results[i].thumbnail },[]),
@@ -142,18 +142,18 @@ function sideBuilder (results) {
     const side = document.getElementById('side-panel');
     side.appendChild(sideItem);
   }
-  let unhideSide = document.getElementById('side-panel');
+  const unhideSide = document.getElementById('side-panel');
   unhideSide.classList.remove('hidden');
 }
 
 function ytBuilder () {
-  var ytDiv = createElement('div', { id: 'youtube-player' }, []);
-  var ytContainer = document.getElementById('yt-container');
+  const ytDiv = createElement('div', { id: 'youtube-player' }, []);
+  const ytContainer = document.getElementById('yt-container');
   ytContainer.appendChild(ytDiv);
 }
 
 function playerBuilder(videoUrl, videoId) {
-  var player = document.getElementById('yt-container');
+  const player = document.getElementById('yt-container');
   player.classList.remove('hidden');
   new YT.Player('youtube-player', {
     height: '390',
@@ -172,18 +172,18 @@ function onPlayerReady(event) {
 
 function playVideo(videoId) {
   cleanDOM();
-  var videoUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"`;
+  const videoUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"`;
   playerBuilder(videoUrl, videoId);
   sideSearch()
   comments(videoId);
 }
 
 function sideSearch() {
-  var element = document.getElementById('side-panel');
-  var sidebarQuery = queryCollection[Math.floor(Math.random() * queryCollection.length)];
-  let thenable = search(sidebarQuery);
+  // const element = document.getElementById('side-panel');
+  const sidebarQuery = queryCollection[Math.floor(Math.random() * queryCollection.length)];
+  const thenable = search(sidebarQuery);
   thenable.then(function(response) {
-    var formattedResults = addResults(response.items);
+    const formattedResults = addResults(response.items);
     sideBuilder(formattedResults);
   });
 }
@@ -191,19 +191,18 @@ function sideSearch() {
 /* this begins the commenting section */
 
 function comments(videoId) {
-  var showComments = document.getElementById('comments-container');
+  const showComments = document.getElementById('comments-container');
   showComments.classList.remove('hidden');
   commentInputBuilder(videoId);
   findIdMatches(videoId);
 }
 
 function commentInputBuilder(videoId) {
-  var commentInputContainer = document.getElementById('comment-input-container');
-  var commentInputDiv = document.createElement('div');
+  const commentInputContainer = document.getElementById('comment-input-container');
+  const commentInputDiv = document.createElement('div');
   commentInputDiv.setAttribute('id', 'comment-input-div');
   commentInputDiv.setAttribute('width', '100%');
-  // commentInputDiv.setAttribute('class', 'row');
-  var inputBox = document.createElement('input');
+  const inputBox = document.createElement('input');
   inputBox.setAttribute('data-videoid', videoId);
   inputBox.setAttribute('class', 'form-control');
   inputBox.setAttribute('id', 'new-comment');
@@ -211,7 +210,7 @@ function commentInputBuilder(videoId) {
   inputBox.setAttribute('type', 'text');
   commentInputDiv.appendChild(inputBox);
   commentInputContainer.insertBefore(commentInputDiv, commentInputContainer.childNodes[0]);
-  var commentListener = document.getElementById('new-comment');
+  const commentListener = document.getElementById('new-comment');
   commentListener.addEventListener('keyup', function(event) {
     event.preventDefault();
     if (event.keyCode == 13) {
@@ -222,11 +221,11 @@ function commentInputBuilder(videoId) {
 }
 
 function findIdMatches(videoId) {
-  var matches = [];
+  const matches = [];
   commentsCollection.sort(function (a, b){
     return a.datePosted - b.datePosted;
   })
-  for (var i = 0; i < commentsCollection.length; i++) {
+  for (let i = 0; i < commentsCollection.length; i++) {
     if (commentsCollection[i].videoId === videoId) {
       matches.push(commentsCollection[i]);
       insertComment(commentsCollection[i]);
@@ -235,14 +234,14 @@ function findIdMatches(videoId) {
 }
 
 function insertComment(commentMatch) {
-  var commentThreads = document.getElementById('comment-threads');
-  var commentLi = document.createElement('li');
-  var commentHeading = document.createElement('p');
+  const commentThreads = document.getElementById('comment-threads');
+  const commentLi = document.createElement('li');
+  const commentHeading = document.createElement('p');
   commentHeading.setAttribute('id', 'comment-heading');
-  var commentP = document.createElement('p');
+  const commentP = document.createElement('p');
   commentP.setAttribute('id', 'comment-p');
-  var commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD"));
-  var commentText = document.createTextNode(commentMatch.commentString);
+  const commentId = document.createTextNode(moment(commentMatch.datePosted, "YYYYMMDD"));
+  const commentText = document.createTextNode(commentMatch.commentString);
   commentHeading.appendChild(commentId);
   commentP.appendChild(commentText);
   commentLi.appendChild(commentHeading);
@@ -251,12 +250,12 @@ function insertComment(commentMatch) {
 }
 
 function newComment() {
-  var commentElement = document.getElementById('new-comment');
-  var commentString = commentElement.value;
-  var inputBox = document.getElementById('new-comment')
-  var videoId = inputBox.getAttribute('data-videoid');
-  var datePosted = moment().format('YYYYMMDD');
-  var comment = {
+  const commentElement = document.getElementById('new-comment');
+  const commentString = commentElement.value;
+  const inputBox = document.getElementById('new-comment')
+  const videoId = inputBox.getAttribute('data-videoid');
+  const datePosted = moment().format('YYYYMMDD');
+  const comment = {
     commentString: commentString,
     datePosted: datePosted,
     videoId: videoId
@@ -267,29 +266,36 @@ function newComment() {
 }
 
 
+INSERT INTO comments (videoId, datePosted, commentString) VALUES
+    ('tntOCGkgt98', '20160907', 'this is the coolest site ever'),
+    ('G8KpPw303PY', '20160206', 'this is the gnarliest site ever'),
+    ('htOroIbxiFY', '20140601', 'this is the sickest site ever'),
+    ('tntOCGkgt98', '20140519', 'this is the baddest site ever'),
+    ('htOroIbxiFY', '20131231', 'this is the raddest site ever');
 
-var queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
-var commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
+
+const queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
+const commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
                           {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
                           {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
-var thenable = search('the best of 2016');
+const thenable = search('the best of 2016');
 thenable.then(function(response) {
-  var formattedResults = addResults(response.items);
+  const formattedResults = addResults(response.items);
   cardDeckBuilder(formattedResults);
 });
 
-var formListener = document.getElementById('search-div');
+const formListener = document.getElementById('search-div');
 formListener.addEventListener('submit', (event)  => {
   event.preventDefault();
   cleanDOM();
   const queryElement = document.getElementById('searchquery')
-  let queryString = queryElement.value;
-  let thenable = search(queryString);
+  const queryString = queryElement.value;
+  const thenable = search(queryString);
   thenable.then(function(response) {
-    var formattedResults = addResults(response.items);
+    const formattedResults = addResults(response.items);
     resultsBuilder(formattedResults);
   });
   sideSearch();
