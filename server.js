@@ -1,5 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const path = require('path')
+const fs = require('fs')
+const logger = require('morgan')
 const config = require('./knexfile.js')
 const env = 'development';
 const knex = require('knex')(config[env])
@@ -8,6 +11,14 @@ const app = express()
 const jsonParser = bodyParser.json()
 
 // add a middleware to validate that the params are included and redirect back to the page if not
+
+const logpath = path.join(__dirname, '/server.log')
+var accessLogStream = fs.createWriteStream(logpath, {flags: 'a'})
+app.use(logger('dev', {stream: accessLogStream}));
+app.use(bodyParser.urlencoded({extended: false}));
+
+const staticPath = path.join(__dirname, '/public')
+app.use(express.static(staticPath));
 
 app.get('/comments/:videoid', jsonParser, (req, res) => {
   if (!req.body) {

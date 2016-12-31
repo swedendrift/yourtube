@@ -1,5 +1,5 @@
 /* functions for cleaning the DOM between queries */
-const API_KEY = 
+const API_KEY = 'AIzaSyA8kjmQJSIFArR2oGJQeN0fyEdY320Y8dM'
 
 function cleanDOM() {
   clearChildren('yt-container');
@@ -45,13 +45,13 @@ function addResults(results) {
   const myResults = [];
   for (let i = 0; i < results.length; i++) {
     if (results[i].id.kind === 'youtube#video') {
-      var videoId = results[i].id.videoId;
-      var date = results[i].snippet.publishedAt;
-      var title = results[i].snippet.title;
-      var description = results[i].snippet.description;
-      var medThumbnail = results[i].snippet.thumbnails.medium.url;
-      var thumbnail = results[i].snippet.thumbnails.default.url;
-      var currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
+      const videoId = results[i].id.videoId;
+      const date = results[i].snippet.publishedAt;
+      const title = results[i].snippet.title;
+      const description = results[i].snippet.description;
+      const medThumbnail = results[i].snippet.thumbnails.medium.url;
+      const thumbnail = results[i].snippet.thumbnails.default.url;
+      const currentResult = new Result(videoId, date, title, description, thumbnail, medThumbnail);
       myResults.push(currentResult);
     }
   }
@@ -179,7 +179,6 @@ function playVideo(videoId) {
 }
 
 function sideSearch() {
-  // const element = document.getElementById('side-panel');
   const sidebarQuery = queryCollection[Math.floor(Math.random() * queryCollection.length)];
   const thenable = search(sidebarQuery);
   thenable.then(function(response) {
@@ -193,8 +192,10 @@ function sideSearch() {
 function comments(videoId) {
   const showComments = document.getElementById('comments-container');
   showComments.classList.remove('hidden');
+
   commentInputBuilder(videoId);
-  findIdMatches(videoId);
+  const matches = searchComments(videoId);
+  console.log(matches)
 }
 
 function commentInputBuilder(videoId) {
@@ -220,17 +221,27 @@ function commentInputBuilder(videoId) {
   });
 }
 
-function findIdMatches(videoId) {
-  const matches = [];
-  commentsCollection.sort(function (a, b){
-    return a.datePosted - b.datePosted;
-  })
-  for (let i = 0; i < commentsCollection.length; i++) {
-    if (commentsCollection[i].videoId === videoId) {
-      matches.push(commentsCollection[i]);
-      insertComment(commentsCollection[i]);
-    }
-  }
+// function findIdMatches(videoId) {
+//
+//   const matches = []
+//   commentsCollection.sort(function (a, b){
+//     return a.datePosted - b.datePosted;
+//   })
+//   for (let i = 0; i < commentsCollection.length; i++) {
+//     if (commentsCollection[i].videoId === videoId) {
+//       matches.push(commentsCollection[i]);
+//       insertComment(commentsCollection[i]);
+//     }
+//   }
+// }
+
+function searchComments(videoId) {
+  const url = `http://localhost:3000/comments/${videoId}`;
+  fetch(url).then((response) => {
+    return response.json();
+  }).catch(function(error) {
+    alert(`There was an error with your request: ${error}`);
+  });
 }
 
 function insertComment(commentMatch) {
@@ -266,11 +277,11 @@ function newComment() {
 }
 
 const queryCollection = ['cats', 'surfing', 'birds', 'chet atkins', 'hadoop', 'aws', 'ancient alients', 'conspiracies'];
-const commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
-                          {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
-                          {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
-                          {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
-                          {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
+// const commentsCollection = [{videoId: 'tntOCGkgt98', datePosted: '20160907', commentString: 'this is the coolest site ever'},
+//                           {videoId: 'G8KpPw303PY', datePosted: '20160206', commentString: 'this is the gnarliest site ever'},
+//                           {videoId: 'htOroIbxiFY', datePosted: '20140601', commentString: 'this is the sickest site ever'},
+//                           {videoId: 'tntOCGkgt98', datePosted: '20140519', commentString: 'this is the baddest site ever'},
+//                           {videoId: 'htOroIbxiFY', datePosted: '20131231', commentString: 'this is the raddest site ever'}];
 
 const thenable = search('the best of 2016');
 thenable.then(function(response) {
