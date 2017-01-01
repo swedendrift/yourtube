@@ -12,7 +12,7 @@ const jsonParser = bodyParser.json()
 
 // add a middleware to validate that the params are included and redirect back to the page if not
 
-const logpath = path.join(__dirname, '/server.log')
+const logpath = path.join(__dirname, './server.log')
 var accessLogStream = fs.createWriteStream(logpath, {flags: 'a'})
 app.use(logger('dev', {stream: accessLogStream}));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -33,6 +33,7 @@ app.get('/comments/:videoid', jsonParser, (req, res) => {
 })
 
 app.post('/comments', jsonParser, (req, res) => {
+  console.log(req.body)
   if (!req.body) {
     return res.sendStatus(400)
   } else {
@@ -49,7 +50,7 @@ app.post('/comments', jsonParser, (req, res) => {
   }
 })
 
-// need to evaluate better ways to identify commnet to be deleted
+// need to evaluate better ways to identify comment to be deleted
 
 app.delete('/comments/:id', jsonParser, (req, res) => {
   if (!req.body) {
