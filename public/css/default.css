@@ -155,7 +155,7 @@ body {
 #results-panel li:hover { cursor: pointer; }
 
 #side-panel {
-  position: absolute;
+  position: relative;
   left: 690px;
   background-color: white;
   margin-top: 0;
