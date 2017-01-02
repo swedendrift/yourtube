@@ -50,8 +50,6 @@ app.post('/comments', jsonParser, (req, res) => {
   }
 })
 
-// need to evaluate better ways to identify comment to be deleted
-
 app.delete('/comments/:id', jsonParser, (req, res) => {
   if (!req.body) {
     return res.sendStatus(400)
