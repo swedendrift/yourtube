@@ -121,32 +121,36 @@ function addCards(deck) {
 }
 
 function resultsBuilder(results) {
+  const resultsPanel = document.getElementById('results-panel')
+  const list = createElement('ul', { class: 'list-group', id: 'results-list' }, [])
+
   for (let i = 0; i < results.length; i++) {
     const resultItem =
-        createElement('ul', { class: 'list-group', id: 'results-list' }, [
           createElement('li', { class: 'results-list-item', id: results[i].videoId }, [
             createElement('img', { 'data-vid': results[i].videoId, src: results[i].medThumbnail }, []),
             createElement('p', { 'data-vid': results[i].videoId, id: 'results-heading' }, [results[i].title]),
             createElement('p', { 'data-vid': results[i].videoId, id: 'results-description' }, [results[i].description])
-          ]),
         ])
-    const resultsPanel = document.getElementById('results-panel')
-    resultsPanel.appendChild(resultItem)
+    list.appendChild(resultItem)
   }
+  resultsPanel.appendChild(list)
 }
 
 function sideBuilder (results) {
+  const side = document.getElementById('side-panel')
+  const list = createElement('ul', { class: 'list-group', id: 'side-list' }, [])
+
+
   for (let i = 0; i < results.length; i++) {
-    const sideItem =
-        createElement('ul', { class: 'list-group', id: 'side-list' },[
-          createElement('li', { class: 'list-group-item', id: results[i].videoId }, [
+    var sideItem =
+          createElement('a', { class: 'list-group-item list-group-item-action', id: results[i].videoId }, [
             createElement('img', { class: 'd-inline-block', 'data-vid': results[i].videoId, src: results[i].thumbnail },[]),
             createElement('p', { class: 'd-inline-block', 'data-vid': results[i].videoId, id: 'side-title' }, [results[i].title])
-          ]),
         ])
-    const side = document.getElementById('side-panel')
-    side.appendChild(sideItem)
+    list.appendChild(sideItem)
   }
+
+  side.appendChild(list)
   const unhideSide = document.getElementById('side-panel')
   unhideSide.classList.remove('hidden')
 }
@@ -208,10 +212,10 @@ function commentInputBuilder(videoId) {
   commentInputDiv.setAttribute('width', '100%')
   const inputBox = document.createElement('input')
   inputBox.setAttribute('data-videoid', videoId)
-  inputBox.setAttribute('class', 'form-control')
+  inputBox.setAttribute('class', 'form-control center-block')
   inputBox.setAttribute('id', 'new-comment')
   inputBox.setAttribute('placeholder', 'Add a comment...')
-  inputBox.setAttribute('type', 'text')
+  inputBox.setAttribute('type', 'search')
   commentInputDiv.appendChild(inputBox)
   commentInputContainer.insertBefore(commentInputDiv, commentInputContainer.childNodes[0])
   const commentListener = document.getElementById('new-comment')

@@ -54,22 +54,31 @@ body {
   border-bottom-left-radius: 0px;
 }
 
+.float-left {
+  float: left;
+}
+
 #comments-container {
   position: absolute;
   top: 475px;
   width: 640px;
-  min-height: 100px;
+  min-height: 120px;
   margin-top: 15px;
   margin-right: 15px;
   margin-bottom: 15px;
-  margin-left: 30px;
 }
 
-#comment-input-container {
-
+#new-comment {
   position: relative;
-  left: 65px;
   top: 25px;
+  left: 60px;
+  padding-bottom: 30px;
+  width: 80%;
+}
+#comment-input-container {
+  position: relative;
+  left: 0px;
+  top: 0px;
   margin: 0;
   padding-bottom: 20px;
 }
@@ -88,20 +97,22 @@ body {
 
 #comment-p { padding-left: 30px; }
 
-#comment-threads { list-style-type: none; }
+#comment-threads {
+  list-style-type: none;
+  left: 30px;
+}
 
 #comment-threads li { padding-bottom:  3px !important; }
 
 #comment-threads li:before {
   position: relative;
-  top: 20px;
+  top: 25px;
   left: -15px;
   padding-top: 10px !important;
   font-family: 'FontAwesome';
   content: '\f075';
   color: #666;
   font-size:10px;
-  z-index: 3;
 }
 
 #results-heading {
@@ -155,14 +166,15 @@ body {
 #results-panel li:hover { cursor: pointer; }
 
 #side-panel {
-  position: relative;
-  left: 690px;
+  /*position: relative;*/
+  /*white-space: nowrap;*/
+  float: right;
   background-color: white;
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 15px;
   margin-left: 10px;
-  width: 350px;
+  /*width: 450px;*/
   -webkit-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
   -moz-box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
   box-shadow: 3px 3px 3px 0px rgba(186,186,186,.83);
@@ -173,7 +185,7 @@ body {
   padding: 0px;
 }
 
-#side-panel p {
+#side-panel a p {
   width: 200px;
   padding-left: 10px;
   margin: 0;
@@ -187,7 +199,7 @@ body {
 
 }
 
-#side-panel li img {
+/*#side-panel li img {
   width: 120px;
   height: 90px;
 
@@ -197,9 +209,9 @@ body {
   padding: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+}*/
 
-#side-panel li:hover { cursor: pointer; }
+#side-panel a:hover { cursor: pointer; }
 
 @media only screen and (max-width: 1010px) {
   #side-panel {
@@ -213,19 +225,12 @@ body {
 
 #top-bar { margin-bottom: 20px; }
 
-#new-comment {
-  position: relative;
-  left: 15px;
-  padding-bottom: 20px;
-  width: 80%;
-}
-
 #yt-container {
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 0;
-  margin-left: 30px;
+  margin-left: 0;
   float: left;
   max-height: 390px;
-  width: 640px;
+  max-width: 600px;
 }
