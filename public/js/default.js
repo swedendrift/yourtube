@@ -1,7 +1,7 @@
 /* Global variables */
 
 const API_KEY = 'AIzaSyA8kjmQJSIFArR2oGJQeN0fyEdY320Y8dM'
-const PG_KNEX = 'http://localhost:3000/comments'
+const PG_KNEX = 'http://localhost:3029/comments'
 
 /* functions for cleaning the DOM between queries */
 
@@ -182,6 +182,8 @@ function onPlayerReady(event) {
 function playVideo(videoId) {
   cleanDOM()
   const videoUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&fs=1&origin=http://localhost"frameborder="0"`
+  const results = document.getElementById('results-panel')
+  results.classList.add('hidden')
   playerBuilder(videoUrl, videoId)
   sideSearch()
   comments(videoId)

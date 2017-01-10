@@ -33,7 +33,7 @@ body {
 }
 
 .card-deck-wrapper {
-  z-index: 2;
+  /*z-index: 2;*/
   margin: 0 auto;
   /*position: absolute;
   left: 70px;*/
@@ -213,7 +213,7 @@ body {
 
 #side-panel a:hover { cursor: pointer; }
 
-@media only screen and (max-width: 1010px) {
+@media only screen and (max-width: 1200px) {
   #side-panel {
     display: none;
   }
