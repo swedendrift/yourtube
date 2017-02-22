@@ -1,6 +1,6 @@
 /* Global variables */
 
-const API_KEY = 'AIzaSyA8kjmQJSIFArR2oGJQeN0fyEdY320Y8dM'
+const API_KEY = ''
 const PG_KNEX = 'http://localhost:3000/comments'
 
 /* functions for cleaning the DOM between queries */
