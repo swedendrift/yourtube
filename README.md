@@ -1,5 +1,5 @@
 
-#YourTube: for you viewing pleasure?
+#YourTube: for you viewing pleasure.
 
 ####A limited YouTube clone written with modern web technologies including:
 - vanilla JavaScript on the front end
