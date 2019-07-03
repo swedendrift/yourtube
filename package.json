@@ -7,7 +7,9 @@
     "watch": "nodemon",
     "migrate:make": "knex migrate:make",
     "migrate": "knex migrate:latest",
-    "rollback": "knex migrate:rollback"
+    "rollback": "knex migrate:rollback",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "Erick Lee",
@@ -17,9 +19,11 @@
     "express": "^4.14.0",
     "knex": "^0.12.6",
     "morgan": "^1.7.0",
-    "pg": "^6.1.2"
+    "pg": "^6.1.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
-  }
+  },
+  "snyk": true
 }
